@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nowtask</title>
+
+  <!-- PWA設定 -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#000000">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="nowtask">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <meta name="description" content="シンプルなモノクロデザインのタスク管理アプリ">
+
+  <link rel="stylesheet" href="css/style-base.css?v=46">
+  <link rel="stylesheet" href="css/style-components.css?v=46">
+  <link rel="stylesheet" href="style.css?v=47">
+  <link rel="stylesheet" href="animations.css?v=51">
+
+  <!-- HTML2Canvas for sharing screenshots -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <!-- 旧ヘッダー（後方互換性のため保持） -->
+  <header class="header" id="old-header">
+    <div class="header-content">
+      <h1 class="app-title" id="app-title-btn" style="cursor: pointer;">nowtask</h1>
+      <div class="header-actions">
+        <button class="calendar-icon-btn" id="calendar-icon-btn" aria-label="カレンダー" title="カレンダー">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+        </button>
+        <button class="login-icon-btn" id="login-icon-btn" aria-label="アカウント" title="アカウント">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </button>
+        <button class="settings-icon-btn" id="settings-icon-btn" aria-label="設定" title="設定">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+        <button class="header-menu-btn" id="header-menu-btn" aria-label="メニュー" title="メニュー">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="1"></circle>
+            <circle cx="12" cy="5" r="1"></circle>
+            <circle cx="12" cy="19" r="1"></circle>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 新ヘッダー（新しいデザイン） -->
+  <header class="new-header" id="new-header">
+    <div class="new-header-content">
+      <h1 class="new-app-title">nowtask</h1>
+      <div class="new-header-actions">
+        <button class="new-header-btn" id="new-calendar-btn" aria-label="カレンダー" title="カレンダー">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+        </button>
+        <button class="new-header-btn" id="new-account-btn" aria-label="アカウント" title="アカウント">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </button>
+        <button class="new-header-btn" id="new-settings-btn" aria-label="設定" title="設定">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+        <button class="new-header-btn" id="new-menu-btn" aria-label="メニュー" title="メニュー">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="1"></circle>
+            <circle cx="12" cy="5" r="1"></circle>
+            <circle cx="12" cy="19" r="1"></circle>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- メインコンテンツエリア -->
+  <main class="main-content">
+    <!-- タスクタブ -->
+    <div class="tab-content active" id="tasks-tab">
+      <!-- 旧24時間ゲージ（後方互換性のため保持） -->
+      <section class="time-gauge" id="old-time-gauge-container" role="region" aria-label="24時間ゲージ">
+        <header class="time-gauge-header">
+          <button class="gauge-nav-btn" id="gauge-prev-btn" aria-label="前の日に移動" title="前の日に移動" type="button">‹</button>
+          <div class="gauge-header-center">
+            <div class="gauge-date-label" id="gauge-date-label">今日</div>
+            <time class="current-time" id="current-time" datetime="00:00" aria-live="polite">00:00</time>
+            <div class="remaining-tasks" id="remaining-tasks" role="status" aria-live="polite" aria-atomic="true">残り: 0時間</div>
+          </div>
+          <button class="gauge-nav-btn" id="gauge-next-btn" aria-label="次の日に移動" title="次の日に移動" type="button">›</button>
+        </header>
+        <div class="gauge-wrapper" id="old-gauge-wrapper">
+          <div class="gauge-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+            <div class="time-gauge-elapsed" id="time-gauge-elapsed" aria-hidden="true"></div>
+            <div class="time-gauge-scheduled" id="time-gauge-scheduled" aria-hidden="true"></div>
+            <div class="time-gauge-free" id="time-gauge-free" aria-hidden="true"></div>
+            <div class="time-marker" id="time-marker" aria-label="現在時刻マーカー" role="img"></div>
+          </div>
+          <div class="time-labels" role="list" aria-label="時間表記">
+            <span class="time-label" role="listitem" aria-label="0時">0:00</span>
+            <span class="time-label" role="listitem" aria-label="6時">6:00</span>
+            <span class="time-label" role="listitem" aria-label="12時">12:00</span>
+            <span class="time-label" role="listitem" aria-label="18時">18:00</span>
+            <span class="time-label" role="listitem" aria-label="24時">24:00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 新24時間ゲージ（新しいデザイン） -->
+      <section class="new-time-gauge" id="new-time-gauge-container" role="region" aria-label="24時間ゲージ">
+        <header class="new-gauge-header">
+          <button class="new-gauge-nav-btn" id="new-gauge-prev-btn" aria-label="前の日に移動" title="前の日に移動" type="button">‹</button>
+          <div class="new-gauge-header-center">
+            <div class="new-gauge-date-label" id="new-gauge-date-label">今日</div>
+            <time class="new-current-time" id="new-current-time-display" datetime="00:00" aria-live="polite">00:00</time>
+            <div class="new-remaining-tasks" id="new-remaining-tasks" role="status" aria-live="polite" aria-atomic="true">残り: 0時間</div>
+          </div>
+          <button class="new-gauge-nav-btn" id="new-gauge-next-btn" aria-label="次の日に移動" title="次の日に移動" type="button">›</button>
+        </header>
+        <div class="new-gauge-wrapper" id="new-gauge-wrapper">
+          <div class="new-gauge-bar" aria-label="24時間ゲージ" role="list">
+            <!-- 24個のステップはJavaScriptで生成 -->
+          </div>
+          <div class="new-time-labels">
+            <!-- 時間表記はJavaScriptで生成 -->
+          </div>
+        </div>
+      </section>
+
+      <!-- 旧複数選択ボタン（後方互換性のため保持） -->
+      <div class="bulk-select-button-container" id="old-bulk-select-button-container">
+        <button type="button" class="bulk-select-toggle-btn" id="bulk-select-toggle-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+            <polyline points="9 11 12 14 22 4"></polyline>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+          複数選択
+        </button>
+      </div>
+
+      <!-- 新複数選択ボタン（新しいデザイン） -->
+      <div class="new-bulk-select-button-container" id="new-bulk-select-button-container">
+        <button type="button" class="new-bulk-select-toggle-btn" id="new-bulk-select-toggle-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 11 12 14 22 4"></polyline>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+          複数選択
+        </button>
+      </div>
+
+      <div id="tasks-list" class="task-list"></div>
+      <div class="empty-state" id="tasks-empty">
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="#d0d0d0" stroke-width="2" style="margin: 0 auto 24px;">
+          <circle cx="50" cy="50" r="35" stroke-dasharray="5,5"></circle>
+          <path d="M50 30 L50 50 L65 50" stroke-linecap="round"></path>
+        </svg>
+        <p style="font-size: 18px; font-weight: 500; margin-bottom: 12px; color: #9e9e9e;">タスクがありません</p>
+        <small style="font-size: 14px; color: #bdbdbd;">+ ボタンからタスクを追加しましょう</small>
+      </div>
+
+      <!-- 完了済みセクション -->
+      <div class="completed-section" id="completed-section">
+        <button class="completed-toggle" id="completed-toggle">
+          <span class="toggle-icon">▶</span>
+          <span class="toggle-text">完了済み</span>
+          <span class="completed-count" id="completed-count">(0)</span>
+        </button>
+        <div class="completed-content" id="completed-content">
+          <div id="completed-list" class="task-list"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 複数選択ツールバー -->
+  <div class="bulk-actions-toolbar" id="bulk-actions-toolbar" style="display: none;">
+    <div class="bulk-toolbar-top">
+      <button type="button" class="bulk-cancel-btn" id="bulk-cancel-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <span class="bulk-selection-count" id="bulk-selection-count">0件選択中</span>
+      <button type="button" class="btn-link" id="bulk-select-all-btn">すべて選択</button>
+    </div>
+    <div class="bulk-toolbar-actions">
+      <button type="button" class="bulk-action-btn-with-label" id="bulk-complete-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span>完了</span>
+      </button>
+      <button type="button" class="bulk-action-btn-with-label" id="bulk-date-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        <span>日付変更</span>
+      </button>
+      <button type="button" class="bulk-action-btn-with-label" id="bulk-priority-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+        </svg>
+        <span>優先度変更</span>
+      </button>
+      <button type="button" class="bulk-action-btn-with-label bulk-delete-btn" id="bulk-delete-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        </svg>
+        <span>削除</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 新規タスク作成FAB -->
+  <button class="fab" id="create-task-btn" aria-label="新規タスク作成">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+  </button>
+
+  <!-- タスク作成/編集モーダル -->
+  <div class="modal" id="task-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">新規タスク</h2>
+        <button class="close-btn" id="close-modal-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="task-title">タスク名<span class="required">*</span></label>
+          <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+            <input type="text" id="task-title" maxlength="100" placeholder="タスク名を入力" autocomplete="off" style="flex: 1;">
+            <button type="button" class="btn btn-secondary" id="template-select-btn" style="padding: 10px 16px; white-space: nowrap;">テンプレートから選択</button>
+          </div>
+          <div class="char-count"><span id="title-char-count">0</span>/100</div>
+        </div>
+        <div class="form-group">
+          <label for="task-memo">メモ</label>
+          <textarea id="task-memo" rows="4" placeholder="メモを入力（任意）"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="task-due-date">期日</label>
+          <input type="date" id="task-due-date">
+        </div>
+        <div class="form-group">
+          <label for="task-duration">所要時間</label>
+          <select id="task-duration">
+            <option value="">時間未設定</option>
+            <option value="15">15分</option>
+            <option value="30">30分</option>
+            <option value="45">45分</option>
+            <option value="60">1時間</option>
+            <option value="90">1時間30分</option>
+            <option value="120">2時間</option>
+            <option value="150">2時間30分</option>
+            <option value="180">3時間</option>
+            <option value="210">3時間30分</option>
+            <option value="240">4時間</option>
+            <option value="270">4時間30分</option>
+            <option value="300">5時間</option>
+            <option value="330">5時間30分</option>
+            <option value="360">6時間</option>
+            <option value="390">6時間30分</option>
+            <option value="420">7時間</option>
+            <option value="450">7時間30分</option>
+            <option value="480">8時間</option>
+            <option value="510">8時間30分</option>
+            <option value="540">9時間</option>
+            <option value="570">9時間30分</option>
+            <option value="600">10時間</option>
+            <option value="630">10時間30分</option>
+            <option value="660">11時間</option>
+            <option value="690">11時間30分</option>
+            <option value="720">12時間</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="task-start-time">開始時刻</label>
+          <input type="time" id="task-start-time">
+        </div>
+        <div class="form-group">
+          <label for="task-end-time">終了時刻</label>
+          <input type="time" id="task-end-time">
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="task-urgent">
+            緊急
+          </label>
+        </div>
+        <div class="form-group">
+          <label for="task-priority">優先度</label>
+          <select id="task-priority">
+            <option value="">未設定</option>
+            <option value="high">高</option>
+            <option value="medium">中</option>
+            <option value="low">低</option>
+          </select>
+        </div>
+        <div class="form-group timer-section" id="timer-section" style="display: none;">
+          <label>経過時間</label>
+          <div class="timer-display">
+            <span id="timer-display">00:00:00</span>
+            <button type="button" class="timer-btn" id="timer-toggle-btn">開始</button>
+          </div>
+        </div>
+        <div class="form-group subtasks-section" id="subtasks-section" style="display: none;">
+          <label>サブタスク</label>
+          <div id="subtasks-list" class="subtasks-list"></div>
+          <button type="button" class="btn-add-subtask" id="add-subtask-btn">+ サブタスクを追加</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-btn">キャンセル</button>
+        <button class="btn btn-danger" id="delete-btn" style="display: none;">削除</button>
+        <button class="btn btn-primary" id="save-btn">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 確認ダイアログ -->
+  <div class="modal" id="confirm-modal">
+    <div class="modal-content confirm-modal">
+      <div class="modal-header">
+        <h2 id="confirm-title">確認</h2>
+      </div>
+      <div class="modal-body">
+        <p id="confirm-message"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="confirm-cancel-btn">キャンセル</button>
+        <button class="btn btn-primary" id="confirm-ok-btn">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 設定モーダル -->
+  <div class="modal" id="settings-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>設定</h2>
+        <button class="close-btn" id="close-settings-btn">&times;</button>
+      </div>
+      <div class="modal-body" id="settings-modal-body">
+        <!-- 設定内容はJavaScriptで生成 -->
+        <div id="routines-list"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="settings-cancel-btn">キャンセル</button>
+        <button class="btn btn-primary" id="settings-save-btn">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- カレンダーモーダル -->
+  <div class="modal" id="calendar-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>カレンダー</h2>
+        <button class="close-btn" id="close-calendar-btn">&times;</button>
+      </div>
+      <div class="modal-body" id="calendar-modal-body">
+        <!-- カレンダー内容はJavaScriptで生成 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 検索・フィルターモーダル -->
+  <div class="modal" id="search-filter-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>検索・フィルター</h2>
+        <button class="close-btn" id="close-search-filter-btn">&times;</button>
+      </div>
+      <div class="modal-body" id="search-filter-modal-body">
+        <!-- 検索・フィルター内容はJavaScriptで生成 -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="search-filter-clear-all-btn">すべてクリア</button>
+        <button class="btn btn-primary" id="search-filter-apply-btn">適用</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 時間オーバー警告モーダル -->
+  <div class="modal" id="time-overload-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>時間オーバー警告</h2>
+        <button class="close-btn" id="close-overload-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="overload-warning">
+          <p class="overload-message">
+            今日のタスクの予定時間が24時間を超えています。<br>
+            <strong id="overload-amount"></strong>分がオーバーしています。
+          </p>
+          <p class="overload-description">
+            以下のタスクの時間を調整するか、別の日に移動することをおすすめします。
+          </p>
+        </div>
+        <div id="overload-tasks-list" class="overload-tasks-list">
+          <!-- タスクリストはJavaScriptで生成 -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="overload-cancel-btn">閉じる</button>
+        <button class="btn btn-primary" id="overload-adjust-btn">タスクを調整する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ログインモーダル -->
+  <div class="modal" id="login-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="login-modal-title">ログイン</h2>
+        <button class="close-btn" id="close-login-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- ログインフォーム（未ログイン時に表示） -->
+        <div id="login-form-section">
+          <p class="settings-description">Googleアカウントでログインすると、データをクラウドに保存できます。</p>
+          <button type="button" class="btn btn-primary" id="google-login-btn" style="width: 100%; margin-top: 16px;">
+            <svg width="18" height="18" viewBox="0 0 48 48" style="vertical-align: middle; margin-right: 8px;">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+              <path fill="none" d="M0 0h48v48H0z"></path>
+            </svg>
+            Googleでログイン
+          </button>
+          <button type="button" class="btn btn-secondary" id="continue-anonymous-btn" style="width: 100%; margin-top: 12px;">匿名のまま使い続ける</button>
+        </div>
+
+        <!-- アカウント情報（ログイン時に表示） -->
+        <div id="account-info-section" style="display: none;">
+          <div class="form-group">
+            <label>表示名</label>
+            <p id="account-display-name" style="font-size: 16px; font-weight: 500;">-</p>
+          </div>
+          <div class="form-group">
+            <label>メールアドレス</label>
+            <p id="account-email" style="font-size: 14px; color: #616161;">-</p>
+          </div>
+          <div class="form-group">
+            <label>ステータス</label>
+            <p id="account-status" style="font-size: 14px; color: #4CAF50;">-</p>
+          </div>
+          <button type="button" class="btn btn-danger" id="logout-btn" style="width: 100%; margin-top: 16px;">ログアウト</button>
+        </div>
+
+        <!-- ユーザー情報表示エリア -->
+        <div id="current-user-info" style="margin-top: 20px; padding: 16px; background: #f5f5f5; border-radius: 8px;">
+          <p style="font-size: 14px; color: #616161; margin: 0;">現在のユーザー: <span id="current-user-id" style="font-weight: 500;">-</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 分析モーダル -->
+  <div class="modal" id="analytics-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>分析</h2>
+        <button class="close-btn" id="close-analytics-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- タスク実績ランキング -->
+        <section class="analytics-section">
+          <h3>タスク実績ランキング（過去30日）</h3>
+          <div id="task-ranking-list" class="ranking-list">
+            <!-- JavaScriptで生成 -->
+          </div>
+        </section>
+
+        <!-- 空き時間統計 -->
+        <section class="analytics-section" style="margin-top: 24px;">
+          <h3>今週の空き時間</h3>
+          <div id="free-time-stats" class="free-time-stats">
+            <!-- JavaScriptで生成 -->
+          </div>
+        </section>
+
+        <!-- 年間空き時間 -->
+        <section class="analytics-section" style="margin-top: 24px;">
+          <h3>年間空き時間</h3>
+          <div id="yearly-free-time" class="yearly-stats">
+            <!-- JavaScriptで生成 -->
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- テンプレートモーダル -->
+  <div class="modal" id="template-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>テンプレート選択</h2>
+        <button class="close-btn" id="close-template-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="settings-description">よく使うタスクをテンプレートとして保存できます。</p>
+
+        <!-- テンプレート一覧 -->
+        <div id="templates-list" class="templates-list">
+          <!-- JavaScriptで生成 -->
+        </div>
+
+        <!-- テンプレート追加フォーム（最初は非表示） -->
+        <div id="template-input-form" style="display: none; margin-top: 16px; padding: 16px; background: #f5f5f5; border-radius: 8px;">
+          <div class="form-group">
+            <label for="template-name">テンプレート名</label>
+            <input type="text" id="template-name" class="form-control" placeholder="例: 朝のランニング">
+          </div>
+          <div class="form-group">
+            <label for="template-duration">所要時間（分）</label>
+            <input type="number" id="template-duration" class="form-control" placeholder="30">
+          </div>
+          <div class="form-group">
+            <label for="template-start-time">開始時刻</label>
+            <input type="time" id="template-start-time" class="form-control">
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 12px;">
+            <button class="btn btn-secondary" id="template-cancel-btn">キャンセル</button>
+            <button class="btn btn-primary" id="template-save-btn">保存</button>
+          </div>
+        </div>
+
+        <!-- 追加ボタン -->
+        <button class="btn btn-primary" id="add-template-btn" style="width: 100%; margin-top: 16px;">+ テンプレート追加</button>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="template-close-btn">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/core.js?v=48"></script>
+  <script src="js/firebase-init.js?v=48"></script>
+  <script src="js/auth.js?v=48"></script>
+  <script src="js/tasks.js?v=48"></script>
+  <script src="js/render.js?v=48"></script>
+  <script src="js/modals.js?v=48"></script>
+  <script src="js/gauge.js?v=48"></script>
+  <script src="js/analytics.js?v=48"></script>
+  <script src="js/overload.js?v=48"></script>
+  <script src="js/share.js?v=48"></script>
+  <script src="js/calendar.js?v=48"></script>
+  <script src="js/templates.js?v=48"></script>
+  <script src="js/events.js?v=48"></script>
+  <script src="js/ui-main.js?v=48"></script>
+  <script src="js/search-filter.js?v=46"></script>
+  <script src="js/input-experience.js?v=48"></script>
+  <script src="js/accessibility.js?v=49"></script>
+  <script src="js/feedback.js?v=49"></script>
+  <script src="js/help.js?v=49"></script>
+  <script src="js/performance.js?v=50"></script>
+  <script src="js/animations.js?v=51"></script>
+  <script src="js/customization.js?v=52"></script>
+</body>
+</html>

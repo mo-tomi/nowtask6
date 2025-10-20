@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nowtask</title>
+
+  <!-- PWA設定 -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#000000">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="nowtask">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <meta name="description" content="モノクロデザインのシンプルなタスク管理アプリ">
+
+  <link rel="stylesheet" href="css/style-base.css?v=33">
+  <link rel="stylesheet" href="css/style-components.css?v=33">
+  <link rel="stylesheet" href="style.css?v=33">
+
+  <!-- HTML2Canvas for sharing screenshots -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <!-- ヘッダー -->
+  <header class="header">
+    <div class="header-content">
+      <h1 class="app-title" id="app-title-btn" style="cursor: pointer;">nowtask</h1>
+      <div class="header-actions">
+        <button class="share-icon-btn" id="share-icon-btn" aria-label="X共有" title="X共有">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+            <polyline points="16 6 12 2 8 6"></polyline>
+            <line x1="12" y1="2" x2="12" y2="15"></line>
+          </svg>
+        </button>
+        <button class="settings-icon-btn" id="settings-icon-btn" aria-label="設定" title="設定">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+        <button class="analytics-icon-btn" id="analytics-icon-btn" aria-label="分析" title="分析">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="13" width="4" height="8"></rect>
+            <rect x="10" y="8" width="4" height="13"></rect>
+            <rect x="17" y="3" width="4" height="18"></rect>
+          </svg>
+        </button>
+        <button class="calendar-icon-btn" id="calendar-icon-btn" aria-label="カレンダー" title="カレンダー">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- タブナビゲーション（削除） -->
+
+  <!-- メインコンテンツエリア -->
+  <main class="main-content">
+    <!-- タスクリスト -->
+    <div class="tab-content active" id="tasks-tab">
+      <!-- 24時間ゲージ -->
+      <section class="time-gauge-container" id="time-gauge-container" role="region" aria-label="24時間タイムゲージ">
+        <header class="time-gauge-header">
+          <button
+            class="gauge-nav-btn"
+            id="gauge-prev-btn"
+            aria-label="前の日に移動"
+            title="前の日に移動"
+            type="button">
+            ‹
+          </button>
+          <div class="gauge-header-center">
+            <div class="gauge-date-label" id="gauge-date-label">今日</div>
+            <time class="current-time" id="current-time" datetime="00:00" aria-live="polite">00:00</time>
+            <div class="remaining-tasks" id="remaining-tasks" role="status" aria-live="polite" aria-atomic="true">
+              残り: 0時間
+            </div>
+          </div>
+          <button
+            class="gauge-nav-btn"
+            id="gauge-next-btn"
+            aria-label="次の日に移動"
+            title="次の日に移動"
+            type="button">
+            ›
+          </button>
+        </header>
+        <div
+          class="time-gauge"
+          role="progressbar"
+          aria-label="24時間の経過時間"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+          tabindex="0">
+          <div class="time-gauge-bg" aria-hidden="true"></div>
+          <div class="time-gauge-gridlines" aria-hidden="true">
+            <div class="gridline" style="left: 25%;"></div>
+            <div class="gridline" style="left: 50%;"></div>
+            <div class="gridline" style="left: 75%;"></div>
+          </div>
+          <div class="time-gauge-elapsed" id="time-gauge-elapsed" aria-hidden="true"></div>
+          <div class="time-gauge-scheduled" id="time-gauge-scheduled" aria-hidden="true"></div>
+          <div class="time-gauge-free" id="time-gauge-free" aria-hidden="true"></div>
+          <div class="time-marker" id="time-marker" aria-label="現在時刻マーカー" role="img"></div>
+        </div>
+        <div class="time-gauge-labels" role="list" aria-label="時間ラベル">
+          <span role="listitem" aria-label="0時">0:00</span>
+          <span role="listitem" aria-label="6時">6:00</span>
+          <span role="listitem" aria-label="12時">12:00</span>
+          <span role="listitem" aria-label="18時">18:00</span>
+          <span role="listitem" aria-label="24時">24:00</span>
+        </div>
+      </section>
+
+      <!-- 絞り込みと並び替えコントロール -->
+      <div class="filter-sort-container" style="display:flex; align-items:center; gap:12px; margin: 12px 0; flex-wrap: wrap;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <label style="font-size:14px; color:#616161;">絞り込み:</label>
+          <button id="filter-urgent" class="filter-btn" type="button">緊急</button>
+          <button id="filter-high-priority" class="filter-btn" type="button">優先度:高</button>
+          <button id="filter-clear" class="filter-btn-clear" type="button">クリア</button>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <label for="sort-select" style="font-size:14px; color:#616161;">並び替え:</label>
+          <select id="sort-select">
+            <option value="time">時間順（期限が近い順）</option>
+            <option value="created">追加順（新しい順）</option>
+            <option value="priority">優先順位順</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="tasks-list" class="task-list"></div>
+      <div class="empty-state" id="tasks-empty">
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="#d0d0d0" stroke-width="2" style="margin: 0 auto 24px;">
+          <circle cx="50" cy="50" r="35" stroke-dasharray="5,5"></circle>
+          <path d="M50 30 L50 50 L65 50" stroke-linecap="round"></path>
+        </svg>
+        <p style="font-size: 18px; font-weight: 500; margin-bottom: 12px; color: #9e9e9e;">タスクがありません</p>
+        <small style="font-size: 14px; color: #bdbdbd;">+ ボタンからタスクを追加しましょう</small>
+      </div>
+
+      <!-- 完了済みセクション（折りたたみ） -->
+      <div class="completed-section" id="completed-section">
+        <button class="completed-toggle" id="completed-toggle">
+          <span class="toggle-icon">▶</span>
+          <span class="toggle-text">完了済み</span>
+          <span class="completed-count" id="completed-count">(0)</span>
+        </button>
+        <div class="completed-content" id="completed-content">
+          <div id="completed-list" class="task-list"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 新規タスク作成FAB -->
+  <button class="fab" id="create-task-btn" aria-label="新規タスク作成">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+  </button>
+
+  <!-- タスク作成/編集モーダル -->
+  <div class="modal" id="task-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">新規タスク</h2>
+        <button class="close-btn" id="close-modal-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="task-title">タスク名 <span class="required">*</span></label>
+          <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+            <input type="text" id="task-title" maxlength="100" placeholder="タスク名を入力" autocomplete="off" style="flex: 1;">
+            <button type="button" class="btn btn-secondary" id="template-select-btn" style="padding: 10px 16px; white-space: nowrap;">📋 テンプレート</button>
+          </div>
+          <div class="char-count"><span id="title-char-count">0</span>/100</div>
+        </div>
+        <div class="form-group">
+          <label for="task-memo">メモ</label>
+          <textarea id="task-memo" rows="4" placeholder="メモを入力（任意）"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="task-due-date">期限日</label>
+          <input type="date" id="task-due-date">
+        </div>
+        <div class="form-group">
+          <label for="task-duration">所要時間</label>
+          <select id="task-duration">
+            <option value="">時間未設定</option>
+            <option value="30">30分</option>
+            <option value="60">1時間</option>
+            <option value="90">1時間30分</option>
+            <option value="120">2時間</option>
+            <option value="150">2時間30分</option>
+            <option value="180">3時間</option>
+            <option value="210">3時間30分</option>
+            <option value="240">4時間</option>
+            <option value="270">4時間30分</option>
+            <option value="300">5時間</option>
+            <option value="330">5時間30分</option>
+            <option value="360">6時間</option>
+            <option value="390">6時間30分</option>
+            <option value="420">7時間</option>
+            <option value="450">7時間30分</option>
+            <option value="480">8時間</option>
+            <option value="510">8時間30分</option>
+            <option value="540">9時間</option>
+            <option value="570">9時間30分</option>
+            <option value="600">10時間</option>
+            <option value="630">10時間30分</option>
+            <option value="660">11時間</option>
+            <option value="690">11時間30分</option>
+            <option value="720">12時間</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="task-start-time">開始時刻</label>
+          <input type="time" id="task-start-time">
+        </div>
+        <div class="form-group">
+          <label for="task-end-time">終了時刻</label>
+          <input type="time" id="task-end-time">
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="task-urgent">
+            緊急
+          </label>
+        </div>
+        <div class="form-group">
+          <label for="task-priority">優先順位</label>
+          <select id="task-priority">
+            <option value="">未設定</option>
+            <option value="high">高</option>
+            <option value="medium">中</option>
+            <option value="low">低</option>
+          </select>
+        </div>
+        <div class="form-group timer-section" id="timer-section" style="display: none;">
+          <label>累積時間</label>
+          <div class="timer-display">
+            <span id="timer-display">00:00:00</span>
+            <button type="button" class="timer-btn" id="timer-toggle-btn">開始</button>
+          </div>
+        </div>
+        <div class="form-group subtasks-section" id="subtasks-section" style="display: none;">
+          <label>サブタスク</label>
+          <div id="subtasks-list" class="subtasks-list"></div>
+          <button type="button" class="btn-add-subtask" id="add-subtask-btn">+ サブタスクを追加</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-btn">キャンセル</button>
+        <button class="btn btn-danger" id="delete-btn" style="display: none;">削除</button>
+        <button class="btn btn-primary" id="save-btn">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 確認ダイアログ -->
+  <div class="modal" id="confirm-modal">
+    <div class="modal-content confirm-modal">
+      <div class="modal-header">
+        <h2 id="confirm-title">確認</h2>
+      </div>
+      <div class="modal-body">
+        <p id="confirm-message"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="confirm-cancel-btn">キャンセル</button>
+        <button class="btn btn-primary" id="confirm-ok-btn">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 設定モーダル -->
+  <div class="modal" id="settings-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>設定</h2>
+        <button class="close-btn" id="close-settings-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h3 class="settings-section-title">デイリールーティン</h3>
+        <p class="settings-description">毎日繰り返すタスクを設定できます。ルーティン名と時間を自由に設定できます。</p>
+
+        <div id="routines-list" class="routines-list">
+          <!-- ルーティンアイテムが動的に追加される -->
+        </div>
+
+        <button type="button" class="btn-add-routine" id="add-routine-btn">+ ルーティンを追加</button>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="save-settings-btn">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 分析モーダル -->
+  <div class="modal" id="analytics-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>📊 データ分析</h2>
+        <button class="close-btn" id="close-analytics-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- タスクランキング -->
+        <section class="analytics-section">
+          <h3 class="analytics-section-title">🏆 タスクランキング TOP5</h3>
+          <p class="analytics-description">完了したタスクの中で、最も時間をかけたタスクです</p>
+          <div id="task-ranking-list" class="ranking-list"></div>
+        </section>
+
+        <!-- 空き時間分析 -->
+        <section class="analytics-section">
+          <h3 class="analytics-section-title">⏰ 空き時間分析</h3>
+          <p class="analytics-description">毎日の空き時間を記録・分析しています</p>
+          <div id="free-time-stats" class="stats-grid"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- カレンダーモーダル -->
+  <div class="modal" id="calendar-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>📅 カレンダー</h2>
+        <button class="close-btn" id="close-calendar-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- カレンダーナビゲーション -->
+        <div class="calendar-nav">
+          <button class="calendar-nav-btn" id="calendar-prev-btn">‹</button>
+          <div class="calendar-current-month" id="calendar-current-month">2025年1月</div>
+          <button class="calendar-nav-btn" id="calendar-next-btn">›</button>
+        </div>
+
+        <!-- カレンダーグリッド -->
+        <div class="calendar-grid" id="calendar-grid">
+          <!-- 曜日ヘッダー -->
+          <div class="calendar-weekday">日</div>
+          <div class="calendar-weekday">月</div>
+          <div class="calendar-weekday">火</div>
+          <div class="calendar-weekday">水</div>
+          <div class="calendar-weekday">木</div>
+          <div class="calendar-weekday">金</div>
+          <div class="calendar-weekday">土</div>
+
+          <!-- 日付セルは動的に生成 -->
+        </div>
+
+        <!-- 月次統計 -->
+        <div id="calendar-monthly-stats" class="calendar-monthly-stats"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- テンプレート選択モーダル -->
+  <div class="modal" id="template-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>📋 テンプレート選択</h2>
+        <button class="close-btn" id="close-template-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="settings-description">よく使うタスクをテンプレートとして保存できます</p>
+
+        <div id="templates-list" class="templates-list">
+          <!-- テンプレートアイテムが動的に追加される -->
+        </div>
+
+        <button type="button" class="btn-add-template" id="add-template-btn">+ 新規テンプレートを追加</button>
+
+        <!-- テンプレート入力フォーム（初期は非表示） -->
+        <div id="template-input-form" class="template-input-form" style="display: none;">
+          <div class="form-group">
+            <label for="template-name-input">タスク名 <span class="required">*</span></label>
+            <input type="text" id="template-name-input" maxlength="100" placeholder="タスク名を入力">
+          </div>
+          <div class="form-group">
+            <label for="template-memo-input">メモ</label>
+            <textarea id="template-memo-input" rows="3" placeholder="メモを入力（任意）"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="template-duration-input">所要時間</label>
+            <select id="template-duration-input">
+              <option value="">時間未設定</option>
+              <option value="30">30分</option>
+              <option value="60">1時間</option>
+              <option value="90">1時間30分</option>
+              <option value="120">2時間</option>
+              <option value="150">2時間30分</option>
+              <option value="180">3時間</option>
+              <option value="210">3時間30分</option>
+              <option value="240">4時間</option>
+              <option value="270">4時間30分</option>
+              <option value="300">5時間</option>
+              <option value="330">5時間30分</option>
+              <option value="360">6時間</option>
+              <option value="390">6時間30分</option>
+              <option value="420">7時間</option>
+              <option value="450">7時間30分</option>
+              <option value="480">8時間</option>
+              <option value="510">8時間30分</option>
+              <option value="540">9時間</option>
+              <option value="570">9時間30分</option>
+              <option value="600">10時間</option>
+              <option value="630">10時間30分</option>
+              <option value="660">11時間</option>
+              <option value="690">11時間30分</option>
+              <option value="720">12時間</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="template-start-time-input">開始時刻</label>
+            <input type="time" id="template-start-time-input">
+          </div>
+          <div class="form-group">
+            <label for="template-end-time-input">終了時刻</label>
+            <input type="time" id="template-end-time-input">
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 16px;">
+            <button type="button" class="btn btn-secondary" id="template-cancel-btn" style="flex: 1;">キャンセル</button>
+            <button type="button" class="btn btn-primary" id="template-save-btn" style="flex: 1;">保存</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="template-close-btn">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 時間オーバー警告モーダル -->
+  <div class="modal" id="time-overload-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>⚠️ 時間オーバー警告</h2>
+        <button class="close-btn" id="close-overload-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="overload-warning">
+          <p class="overload-message">
+            今日のタスクが時間内に収まりません。<br>
+            <strong id="overload-amount"></strong>分オーバーしています。
+          </p>
+          <p class="overload-description">
+            以下のタスクの時間を調整するか、一部を別の日に移動することをおすすめします。
+          </p>
+        </div>
+
+        <div id="overload-tasks-list" class="overload-tasks-list">
+          <!-- タスクリストが動的に生成される -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="overload-cancel-btn">閉じる</button>
+        <button class="btn btn-primary" id="overload-adjust-btn">タスクを調整する</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/firebase-init.js?v=33"></script>
+  <script src="js/core.js?v=33"></script>
+  <script src="js/tasks.js?v=33"></script>
+  <script src="js/render.js?v=33"></script>
+  <script src="js/modals.js?v=33"></script>
+  <script src="js/gauge.js?v=33"></script>
+  <script src="js/analytics.js?v=33"></script>
+  <script src="js/overload.js?v=33"></script>
+  <script src="js/share.js?v=33"></script>
+  <script src="js/calendar.js?v=33"></script>
+  <script src="js/templates.js?v=33"></script>
+  <script src="js/events.js?v=33"></script>
+  <script src="js/ui-main.js?v=33"></script>
+  <script src="js/migration.js?v=33"></script>
+
+  <!-- クイック入力（画面下部固定） -->
+  <form class="quick-add" id="quick-add-form">
+    <div class="quick-input-row">
+      <button type="button" class="quick-action-btn" id="quick-history-btn" title="履歴">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+      </button>
+      <div class="quick-input-wrapper">
+        <input type="text" id="quick-add-input" placeholder="タスク名を入力してEnter" maxlength="100" autocomplete="off" enterkeyhint="done">
+        <div class="quick-input-actions">
+          <button type="button" class="quick-action-btn" id="quick-date-btn" title="日付・時間を設定">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </button>
+          <button type="submit" class="quick-action-btn" title="追加">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 11 12 14 22 4"></polyline>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="quick-history-tags" class="quick-history-tags" style="display: none;"></div>
+
+    <div id="quick-datetime-panel" class="quick-datetime-panel" style="display: none;">
+      <div class="quick-datetime-header">
+        <span>日付・時間設定</span>
+        <button type="button" id="quick-datetime-close" class="quick-datetime-close">&times;</button>
+      </div>
+      <div class="quick-datetime-row">
+        <label for="quick-add-date">期限日:</label>
+        <input type="date" id="quick-add-date">
+      </div>
+      <div class="quick-datetime-row">
+        <label for="quick-add-duration">所要時間:</label>
+        <select id="quick-add-duration">
+          <option value="">未設定</option>
+          <option value="30">30分</option>
+          <option value="60">1時間</option>
+          <option value="90">1時間30分</option>
+          <option value="120">2時間</option>
+          <option value="150">2時間30分</option>
+          <option value="180">3時間</option>
+          <option value="210">3時間30分</option>
+          <option value="240">4時間</option>
+          <option value="270">4時間30分</option>
+          <option value="300">5時間</option>
+          <option value="330">5時間30分</option>
+          <option value="360">6時間</option>
+          <option value="390">6時間30分</option>
+          <option value="420">7時間</option>
+          <option value="450">7時間30分</option>
+          <option value="480">8時間</option>
+          <option value="510">8時間30分</option>
+          <option value="540">9時間</option>
+          <option value="570">9時間30分</option>
+          <option value="600">10時間</option>
+          <option value="630">10時間30分</option>
+          <option value="660">11時間</option>
+          <option value="690">11時間30分</option>
+          <option value="720">12時間</option>
+        </select>
+      </div>
+    </div>
+  </form>
+
+  <!-- Service Worker登録 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(registration => {
+            console.log('Service Worker registered:', registration.scope);
+          })
+          .catch(error => {
+            console.log('Service Worker registration failed:', error);
+          });
+      });
+    }
+  </script>
+</body>
+</html>

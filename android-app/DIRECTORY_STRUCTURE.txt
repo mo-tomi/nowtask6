@@ -1,0 +1,135 @@
+📁 nowtask Androidアプリ ディレクトリ構造
+================================================================================
+
+android-app/
+│
+├── 📄 build.gradle                      # プロジェクト全体のビルド設定
+├── 📄 settings.gradle                   # プロジェクト構造の定義
+│
+├── 📄 README.md                         # 📖 詳細セットアップガイド（必読！）
+├── 📄 QUICK_START.md                    # 🚀 クイックスタートガイド（初心者向け）
+├── 📄 PLAYSTORE_CHECKLIST.md            # ✅ Play Store公開チェックリスト
+├── 📄 PROJECT_SUMMARY.md                # 📊 プロジェクト概要
+└── 📄 DIRECTORY_STRUCTURE.txt           # 📁 このファイル
+│
+└── app/
+    │
+    ├── 📄 build.gradle                  # ⚙️ アプリのビルド設定と依存関係
+    │                                    #    - Firebase, AdMobの設定
+    │                                    #    - パッケージ名（applicationId）
+    │                                    #    - バージョン情報
+    │
+    ├── 📄 google-services.json          # 🔥 Firebaseの設定ファイル
+    │                                    #    ⚠️ Firebaseからダウンロードして配置！
+    │
+    └── src/
+        └── main/
+            │
+            ├── 📄 AndroidManifest.xml   # 📋 アプリの基本設定
+            │                            #    - アプリ名
+            │                            #    - 権限（INTERNET, ACCESS_NETWORK_STATE）
+            │                            #    - AdMob App ID（要変更！）
+            │                            #    - アクティビティ設定
+            │
+            ├── java/
+            │   └── com/
+            │       └── nowtask/
+            │           └── app/
+            │               └── 📄 MainActivity.kt
+            │                                # 💻 メインのKotlinコード
+            │                                #    - WebView設定
+            │                                #    - AdMob初期化
+            │                                #    - Firebase Analytics
+            │                                #    - オフライン検知
+            │                                #    - 戻るボタン処理
+            │
+            └── res/
+                │
+                ├── layout/
+                │   └── 📄 activity_main.xml
+                │                            # 🎨 UIレイアウト
+                │                            #    - WebView
+                │                            #    - スプラッシュ画面
+                │                            #    - AdMobバナー（広告ユニットID要変更！）
+                │
+                ├── values/
+                │   └── 📄 strings.xml       # 🔤 文字列リソース
+                │                            #    - アプリ名
+                │
+                ├── mipmap-hdpi/             # 🖼️ アイコン（高解像度）
+                │   ├── ic_launcher.png
+                │   └── ic_launcher_round.png
+                │
+                ├── mipmap-mdpi/             # 🖼️ アイコン（中解像度）
+                │   ├── ic_launcher.png
+                │   └── ic_launcher_round.png
+                │
+                ├── mipmap-xhdpi/            # 🖼️ アイコン（超高解像度）
+                │   ├── ic_launcher.png
+                │   └── ic_launcher_round.png
+                │
+                ├── mipmap-xxhdpi/           # 🖼️ アイコン（超々高解像度）
+                │   ├── ic_launcher.png
+                │   └── ic_launcher_round.png
+                │
+                └── mipmap-xxxhdpi/          # 🖼️ アイコン（超々々高解像度）
+                    ├── ic_launcher.png
+                    └── ic_launcher_round.png
+
+
+================================================================================
+📝 重要なファイル
+================================================================================
+
+⚠️ 必ず変更が必要なファイル:
+────────────────────────────────────────────────────────────────────────────
+1. 📄 app/google-services.json
+   → Firebaseからダウンロードして配置（まだ存在しないファイル）
+
+2. 📄 app/src/main/AndroidManifest.xml
+   → AdMob App IDを自分のIDに変更（24行目付近）
+
+3. 📄 app/src/main/res/layout/activity_main.xml
+   → AdMob広告ユニットIDを自分のIDに変更（68行目付近）
+
+
+📖 まず読むべきドキュメント:
+────────────────────────────────────────────────────────────────────────────
+1. 📄 QUICK_START.md        # 最速で動かす方法（10分で完了）
+2. 📄 README.md             # 詳しい設定手順とトラブルシューティング
+3. 📄 PLAYSTORE_CHECKLIST.md # Play Storeで公開する方法
+
+
+💡 公開時に変更を推奨するファイル:
+────────────────────────────────────────────────────────────────────────────
+1. 📄 app/build.gradle
+   → applicationId（パッケージ名）を変更
+   → versionCodeとversionNameを更新
+
+2. 📄 app/src/main/res/values/strings.xml
+   → アプリ名を変更（任意）
+
+3. 📄 app/src/main/res/mipmap-*/
+   → アプリアイコンを変更（Image Assetツールで簡単に変更可能）
+
+
+================================================================================
+🚀 次のステップ
+================================================================================
+
+1. Android Studioで「android-app」フォルダを開く
+2. QUICK_START.mdを見ながらFirebaseとAdMobを設定
+3. ビルド＆実行
+4. Play Storeで公開（PLAYSTORE_CHECKLIST.mdを参照）
+
+
+================================================================================
+📞 困ったときは
+================================================================================
+
+- エラーが出たら → README.mdの「よくあるエラーと解決方法」を参照
+- 設定がわからない → QUICK_START.mdを参照
+- 公開方法がわからない → PLAYSTORE_CHECKLIST.mdを参照
+
+
+Good luck! 🎉

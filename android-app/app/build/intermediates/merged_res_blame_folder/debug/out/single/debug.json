@@ -1,0 +1,58 @@
+[
+    {
+        "merged": "com.nowtask.app-merged_res-40:/layout_activity_quick_add_task.xml.flat",
+        "source": "com.nowtask.app-main-42:/layout/activity_quick_add_task.xml"
+    },
+    {
+        "merged": "com.nowtask.app-merged_res-40:/xml_widget_gauge_info.xml.flat",
+        "source": "com.nowtask.app-main-42:/xml/widget_gauge_info.xml"
+    },
+    {
+        "merged": "com.nowtask.app-merged_res-40:/layout_activity_login.xml.flat",
+        "source": "com.nowtask.app-main-42:/layout/activity_login.xml"
+    },
+    {
+        "merged": "com.nowtask.app-merged_res-40:/layout_widget_gauge.xml.flat",
+        "source": "com.nowtask.app-main-42:/layout/widget_gauge.xml"
+    },
+    {
+        "merged": "com.nowtask.app-merged_res-40:/layout_widget_task_list.xml.flat",
+        "source": "com.nowtask.app-main-42:/layout/widget_task_list.xml"
+    },
+    {
+        "merged": "com.nowtask.app-merged_res-40:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.nowtask.app-main-42:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.nowtask.app-merged_res-40:/layout_activity_main.xml.flat",
+        "source": "com.nowtask.app-main-42:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.nowtask.app-merged_res-40:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.nowtask.app-main-42:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.nowtask.app-merged_res-40:/layout_widget_task_item.xml.flat",
+        "source": "com.nowtask.app-main-42:/layout/widget_task_item.xml"
+    },
+    {
+        "merged": "com.nowtask.app-merged_res-40:/xml_widget_info.xml.flat",
+        "source": "com.nowtask.app-main-42:/xml/widget_info.xml"
+    },
+    {
+        "merged": "com.nowtask.app-merged_res-40:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.nowtask.app-main-42:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.nowtask.app-merged_res-40:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.nowtask.app-main-42:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.nowtask.app-merged_res-40:/drawable_widget_background.xml.flat",
+        "source": "com.nowtask.app-main-42:/drawable/widget_background.xml"
+    },
+    {
+        "merged": "com.nowtask.app-merged_res-40:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.nowtask.app-main-42:/mipmap-xhdpi/ic_launcher.png"
+    }
+]
