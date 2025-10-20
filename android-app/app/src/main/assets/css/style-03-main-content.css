@@ -1,0 +1,17 @@
+/* ========================================
+   メインコンテンツ
+   ======================================== */
+.main-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px 16px 120px;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+

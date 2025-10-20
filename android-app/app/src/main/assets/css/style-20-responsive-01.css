@@ -1,0 +1,366 @@
+/* ========================================
+   タスク時間ブロック（ゲージ）
+   ======================================== */
+.task-time-block {
+  position: absolute;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.85) 100%);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-left: 2px solid rgba(0, 0, 0, 0.9);
+  border-right: 2px solid rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.task-time-block::after {
+  content: attr(data-time-label);
+  position: absolute;
+  font-size: 10px;
+  color: white;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.task-time-block:hover {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.7) 100%);
+  transform: scaleY(1.1);
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.task-time-block:hover::after {
+  opacity: 1;
+}
+
+.task-time-block:active {
+  transform: scaleY(0.95);
+}
+
+/* 密度に応じたタスクブロックの色変化 */
+.density-green .task-time-block {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.85) 100%);
+  border-left: 2px solid rgba(0, 0, 0, 0.9);
+  border-right: 2px solid rgba(0, 0, 0, 0.9);
+}
+
+.density-green .task-time-block:hover {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.7) 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.density-yellow .task-time-block {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.85) 100%);
+  border-left: 2px solid rgba(0, 0, 0, 0.9);
+  border-right: 2px solid rgba(0, 0, 0, 0.9);
+}
+
+.density-yellow .task-time-block:hover {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.7) 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.density-red .task-time-block {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.85) 100%);
+  border-left: 2px solid rgba(0, 0, 0, 0.9);
+  border-right: 2px solid rgba(0, 0, 0, 0.9);
+}
+
+.density-red .task-time-block:hover {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.7) 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* ========================================
+   時間帯タスク一覧モーダル
+   ======================================== */
+.time-slot-modal {
+  max-width: 500px;
+}
+
+.time-slot-task-item {
+  padding: 12px;
+  margin-bottom: 8px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.time-slot-task-item:hover {
+  background: #e0e0e0;
+  transform: translateX(4px);
+}
+
+.time-slot-task-item .task-title {
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.time-slot-task-item .task-time {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.time-slot-task-item .task-memo {
+  font-size: 13px;
+  color: #888;
+  margin-top: 8px;
+  white-space: pre-wrap;
+}
+
+/* ========================================
+   元に戻すトースト
+   ======================================== */
+.undo-toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #323232;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  opacity: 0;
+  transition: all 0.3s ease;
+  max-width: 90%;
+}
+
+.undo-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.undo-toast-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.undo-toast-text {
+  font-size: 14px;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+
+.undo-btn {
+  background: transparent;
+  border: none;
+  color: #4CAF50;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.undo-btn:hover {
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.undo-btn:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .undo-toast {
+    bottom: 70px;
+    max-width: 85%;
+  }
+
+  .undo-toast-text {
+    max-width: 200px;
+  }
+}
+
+/* ========================================
+   データ分析モーダル
+   ======================================== */
+.analytics-icon-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.analytics-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.analytics-icon-btn:active {
+  transform: scale(0.95);
+}
+
+.analytics-section {
+  margin-bottom: 32px;
+}
+
+.analytics-section:last-child {
+  margin-bottom: 0;
+}
+
+.analytics-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.analytics-description {
+  font-size: 14px;
+  color: #757575;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.ranking-item:hover {
+  background: #e0e0e0;
+  transform: translateX(4px);
+}
+
+.ranking-exclude-btn {
+  background: rgba(244, 67, 54, 0.1);
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #f44336;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.ranking-exclude-btn:hover {
+  background: rgba(244, 67, 54, 0.2);
+  transform: scale(1.1);
+}
+
+.ranking-exclude-btn:active {
+  transform: scale(0.95);
+}
+
+.ranking-position {
+  font-size: 18px;
+  font-weight: 700;
+  color: #757575;
+  min-width: 36px;
+  text-align: center;
+}
+
+.ranking-position.gold {
+  color: #ffd700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.ranking-position.silver {
+  color: #c0c0c0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.ranking-position.bronze {
+  color: #cd7f32;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.ranking-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ranking-task-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 4px;
+  word-wrap: break-word;
+}
+
+.ranking-time {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000000;
+  white-space: nowrap;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+  background: #e0e0e0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #757575;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #000000;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-unit {
+  font-size: 16px;
+  color: #757575;
+  margin-left: 4px;
+}

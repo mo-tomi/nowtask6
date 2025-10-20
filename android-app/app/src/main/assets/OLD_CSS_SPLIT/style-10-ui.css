@@ -1,0 +1,501 @@
+}
+
+/* ========================================
+   フェーズ 6.7.3: 文字サイズとタップ領域
+   ======================================== */
+
+/* 全ボタンの最小サイズ確保（48×48px） */
+button, a[role="button"], [role="button"] {
+  min-width: 48px;
+  min-height: 48px;
+  padding: 12px 16px;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* アイコンボタンの最小サイズ */
+.icon-btn,
+.select-mode-icon-btn,
+.login-icon-btn,
+.share-icon-btn,
+.settings-icon-btn,
+.analytics-icon-btn,
+.calendar-icon-btn,
+.quick-action-btn,
+.search-clear-btn,
+.close-btn,
+.filter-btn,
+.filter-btn-clear {
+  width: 48px;
+  height: 48px;
+  padding: 12px;
+  font-size: 16px;
+  min-width: 48px;
+  min-height: 48px;
+}
+
+/* 入力フィールドの最小サイズ */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="time"],
+input[type="search"],
+textarea,
+select {
+  min-height: 48px;
+  padding: 12px;
+  font-size: 14px;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  margin: 12px;
+}
+
+/* タスク項目のタップ領域 */
+.task-item,
+.completed-item {
+  min-height: 56px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* リンクのタップ領域 */
+a {
+  min-height: 44px;
+  padding: 8px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* FAB（フローティングアクションボタン）のサイズ */
+.fab {
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ラベルと関連入力のための余白 */
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* セレクト要素の最小サイズ */
+.form-group select {
+  min-height: 48px;
+  padding: 12px;
+  font-size: 14px;
+}
+
+/* モーダルボタンのサイズ */
+.modal-footer button,
+.confirm-dialog-buttons button {
+  min-width: 48px;
+  min-height: 48px;
+  padding: 12px 16px;
+  font-size: 14px;
+  margin: 8px;
+}
+
+/* バッチ操作ボタン */
+.bulk-action-btn-with-label {
+  min-width: 48px;
+  min-height: 48px;
+  padding: 12px 8px;
+  font-size: 12px;
+}
+
+/* フォーム要素周辺の余白 */
+.form-group input,
+.form-group textarea,
+.form-group select {
+  margin: 8px 0;
+}
+
+/* チェックボックスとラジオボタンのサイズ */
+input[type="checkbox"] + label,
+input[type="radio"] + label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 8px 12px;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* 最小フォントサイズの強制（14px以上） */
+body,
+p,
+span,
+div,
+a,
+button {
+  font-size: 14px;
+}
+
+/* 見出しのフォントサイズ */
+h1 {
+  font-size: 24px;
+  min-height: 48px;
+  line-height: 1.5;
+}
+
+h2 {
+  font-size: 20px;
+  min-height: 48px;
+  line-height: 1.5;
+}
+
+h3 {
+  font-size: 18px;
+  min-height: 40px;
+  line-height: 1.4;
+}
+
+h4, h5, h6 {
+  font-size: 16px;
+  min-height: 40px;
+  line-height: 1.4;
+}
+
+/* テキストコンテンツの最小サイズ確保 */
+.task-title,
+.task-item-text,
+.notification-text,
+.error-message,
+.success-message {
+  font-size: 14px;
+  min-height: 20px;
+  line-height: 1.4;
+}
+
+/* 小さいテキストのサイズ制限 */
+.small-text,
+.meta-text,
+.timestamp,
+.subtitle {
+  font-size: 12px;
+  min-height: 18px;
+}
+
+/* 説明テキスト */
+.description,
+.helper-text,
+.form-description {
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: 4px;
+  margin-bottom: 12px;
+}
+
+/* 画面サイズによる調整（小画面デバイス用） */
+@media (max-width: 480px) {
+  /* 小画面では若干緩和 */
+  button, a[role="button"], [role="button"] {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .icon-btn,
+  .quick-action-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="date"],
+  input[type="time"],
+  textarea,
+  select {
+    min-height: 44px;
+  }
+
+  .task-item,
+  .completed-item {
+    min-height: 52px;
+  }
+}
+
+/* 大画面デバイス用（タブレット） */
+@media (min-width: 768px) {
+  button, a[role="button"], [role="button"] {
+    min-width: 52px;
+    min-height: 52px;
+    padding: 14px 20px;
+  }
+
+  .icon-btn,
+  .quick-action-btn {
+    width: 52px;
+    height: 52px;
+  }
+
+  .fab {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+/* ========================================
+   フェーズ 6.7.2: アイコン視認性向上
+   ======================================== */
+
+/* アイコンのサイズと視認性 */
+svg {
+  stroke-width: 2px;
+  min-width: 20px;
+  min-height: 20px;
+}
+
+button svg,
+a svg,
+[role="button"] svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+/* ボタン内のアイコン調整 */
+button:hover svg,
+a:hover svg {
+  stroke-width: 2.5px;
+  opacity: 0.8;
+}
+
+button:active svg,
+a:active svg {
+  stroke-width: 2.5px;
+  opacity: 0.6;
+}
+
+/* アイコンボタンのホバー効果 */
+.icon-btn:hover,
+.quick-action-btn:hover {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.icon-btn:active,
+.quick-action-btn:active {
+  background-color: #e8e8e8;
+}
+
+/* 重要なアイコン（警告など）の強調 */
+.warning-icon,
+.error-icon,
+.success-icon,
+.info-icon {
+  stroke-width: 3;
+}
+
+/* テンプレートアイコン */
+.template-icon,
+.history-icon,
+.search-icon,
+.emoji-icon {
+  min-width: 18px;
+  min-height: 18px;
+}
+
+/* SVG アイコンの濃度向上（コントラスト強化） */
+.icon-btn svg {
+  stroke: #212121;
+}
+
+.icon-btn:hover svg {
+  stroke: #000000;
+}
+
+/* 選択状態のアイコン視認性 */
+.selected .icon-btn svg,
+[aria-selected="true"] svg {
+  stroke: #1976D2;
+  stroke-width: 2.5;
+}
+
+/* ダークモード時のアイコン視認性（将来対応） */
+@media (prefers-color-scheme: dark) {
+  .icon-btn svg {
+    stroke: #e0e0e0;
+  }
+
+  .icon-btn:hover svg {
+    stroke: #ffffff;
+  }
+}
+
+/* ハイコントラストモード時のアイコン */
+@media (prefers-contrast: more) {
+  svg {
+    stroke-width: 3px;
+  }
+
+  button svg,
+  a svg,
+  [role="button"] svg {
+    stroke-width: 3;
+  }
+
+  .icon-btn {
+    border: 2px solid #000000;
+    border-radius: 8px;
+  }
+
+  .icon-btn:hover {
+    background-color: #000000;
+  }
+
+  .icon-btn:hover svg {
+    stroke: #ffffff;
+  }
+}
+
+  .bulk-cancel-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .bulk-selection-count {
+    font-size: 13px;
+  }
+
+  .btn-link {
+    font-size: 12px;
+    padding: 4px 6px;
+  }
+
+  .bulk-toolbar-actions {
+    gap: 4px;
+  }
+
+  .bulk-action-btn-with-label {
+    padding: 6px 8px;
+    font-size: 10px;
+    gap: 2px;
+  }
+
+  .bulk-action-btn-with-label svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* ========================================
+   検索・フィルター・ソート機能
+   ======================================== */
+
+/* 検索バー */
+.search-container {
+  position: relative;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-input-wrapper:focus-within {
+  border-color: #000000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+.search-icon {
+  color: #9e9e9e;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+#search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: #212121;
+  background: transparent;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+#search-input::placeholder {
+  color: #9e9e9e;
+}
+
+.search-clear-btn {
+  background: none;
+  border: none;
+  color: #757575;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 8px;
+  line-height: 1;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.search-clear-btn:hover {
+  background-color: #f5f5f5;
+  color: #212121;
+}
+
+.search-clear-btn:active {
+  background-color: #e0e0e0;
+}
+
+/* 検索履歴 */
+.search-history {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-top: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  max-height: 200px;
+  overflow-y: auto;
+}
+

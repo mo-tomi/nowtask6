@@ -1,0 +1,501 @@
+.btn-add-subtask {
+  width: 100%;
+  padding: 8px 12px;
+  background: white;
+  border: 1px dashed #000000;
+  border-radius: 4px;
+  color: #000000;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-add-subtask:hover {
+  background-color: #e3f2fd;
+  border-style: solid;
+}
+
+.subtask-count {
+  font-size: 12px;
+  color: #757575;
+  margin-left: 4px;
+}
+
+/* ========================================
+   タスク内時間ゲージバー
+   ======================================== */
+.task-time-gauge-wrapper {
+  margin-top: 12px;
+  width: 100%;
+}
+
+.task-time-gauge {
+  position: relative;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+}
+
+.task-time-gauge-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #f5f5f5;
+}
+
+.task-time-gauge-bar {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #333333, #000000);
+  transition: all 0.3s ease;
+  border-radius: 3px;
+}
+
+/* ========================================
+   レスポンシブ対応
+   ======================================== */
+@media (max-width: 600px) {
+  .header {
+    padding: 12px 16px;
+  }
+
+  .app-title {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .time-gauge-container {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .time-gauge-header {
+    margin-bottom: 20px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .gauge-nav-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+
+  .gauge-header-center {
+    gap: 12px;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .current-time {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+  }
+
+  .remaining-tasks {
+    font-size: 13px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    letter-spacing: 0.3px;
+  }
+
+  .time-gauge {
+    height: 56px;
+    border-radius: 6px;
+  }
+
+  .time-gauge-labels {
+    font-size: 11px;
+    margin-top: 10px;
+  }
+
+  .time-marker {
+    width: 3px;
+  }
+
+  .time-marker::before,
+  .time-marker::after {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+  }
+
+  .task-time-block::after {
+    font-size: 9px;
+  }
+
+  .task-item.level-1,
+  .add-subtask-btn.level-1,
+  .subtask-input-inline.level-1 {
+    margin-left: 16px;
+  }
+
+  .task-item.level-2,
+  .add-subtask-btn.level-2,
+  .subtask-input-inline.level-2 {
+    margin-left: 32px;
+  }
+
+  .task-item.level-3,
+  .add-subtask-btn.level-3,
+  .subtask-input-inline.level-3 {
+    margin-left: 48px;
+  }
+
+  .task-item.level-4,
+  .add-subtask-btn.level-4,
+  .subtask-input-inline.level-4 {
+    margin-left: 64px;
+  }
+
+  .main-content {
+    padding: 16px 12px 120px;
+  }
+
+  .task-item {
+    padding: 12px;
+  }
+
+  .fab {
+    bottom: 16px;
+    right: 16px;
+    width: 48px;
+    height: 48px;
+  }
+
+  .modal {
+    padding: 0;
+  }
+
+  .modal-content {
+    border-radius: 0;
+    max-height: 100vh;
+    height: 100%;
+  }
+
+  .modal-footer {
+    flex-direction: column-reverse;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+  }
+}
+
+/* ========================================
+   タスクコンテキストメニュー
+   ======================================== */
+.task-context-menu,
+.header-dropdown-menu {
+  position: fixed;
+  background: white;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+  min-width: 200px;
+  max-width: 90vw;
+  overflow: hidden;
+}
+
+.task-context-menu .menu-item,
+.header-dropdown-menu .menu-item {
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 14px;
+  color: #212121;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: none;
+  background: transparent;
+}
+
+.task-context-menu .menu-item:hover,
+.header-dropdown-menu .menu-item:hover {
+  background-color: #f5f5f5;
+}
+
+.task-context-menu .menu-item:active,
+.header-dropdown-menu .menu-item:active {
+  background-color: #eeeeee;
+}
+
+.task-context-menu .menu-item.delete-item {
+  color: #d32f2f;
+}
+
+.task-context-menu .menu-item.delete-item:hover {
+  background-color: #ffebee;
+}
+
+.task-context-menu .menu-item.delete-item:active {
+  background-color: #ffcdd2;
+}
+
+/* スマホ対応 */
+@media (max-width: 600px) {
+  .task-context-menu,
+  .header-dropdown-menu {
+    left: 50% !important;
+    transform: translateX(-50%);
+    right: auto !important;
+    min-width: 85vw;
+    max-width: 85vw;
+  }
+}
+
+/* ========================================
+   時間記録停止ボタン
+   ======================================== */
+.timer-stop-btn {
+  background: rgba(244, 67, 54, 0.1);
+  border: none;
+  border-radius: 4px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #f44336;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.timer-stop-btn:hover {
+  background: rgba(244, 67, 54, 0.2);
+  transform: scale(1.05);
+}
+
+.timer-stop-btn:active {
+  transform: scale(0.95);
+}
+
+/* ========================================
+   タスク時間ブロック（ゲージ）
+   ======================================== */
+.task-time-block {
+  position: absolute;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.85) 100%);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-left: 2px solid rgba(0, 0, 0, 0.9);
+  border-right: 2px solid rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.task-time-block::after {
+  content: attr(data-time-label);
+  position: absolute;
+  font-size: 10px;
+  color: white;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.task-time-block:hover {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.7) 100%);
+  transform: scaleY(1.1);
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.task-time-block:hover::after {
+  opacity: 1;
+}
+
+.task-time-block:active {
+  transform: scaleY(0.95);
+}
+
+/* 密度に応じたタスクブロックの色変化 */
+.density-green .task-time-block {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.85) 100%);
+  border-left: 2px solid rgba(0, 0, 0, 0.9);
+  border-right: 2px solid rgba(0, 0, 0, 0.9);
+}
+
+.density-green .task-time-block:hover {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.7) 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.density-yellow .task-time-block {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.85) 100%);
+  border-left: 2px solid rgba(0, 0, 0, 0.9);
+  border-right: 2px solid rgba(0, 0, 0, 0.9);
+}
+
+.density-yellow .task-time-block:hover {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.7) 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.density-red .task-time-block {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.85) 100%);
+  border-left: 2px solid rgba(0, 0, 0, 0.9);
+  border-right: 2px solid rgba(0, 0, 0, 0.9);
+}
+
+.density-red .task-time-block:hover {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.7) 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* ========================================
+   時間帯タスク一覧モーダル
+   ======================================== */
+.time-slot-modal {
+  max-width: 500px;
+}
+
+.time-slot-task-item {
+  padding: 12px;
+  margin-bottom: 8px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.time-slot-task-item:hover {
+  background: #e0e0e0;
+  transform: translateX(4px);
+}
+
+.time-slot-task-item .task-title {
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.time-slot-task-item .task-time {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.time-slot-task-item .task-memo {
+  font-size: 13px;
+  color: #888;
+  margin-top: 8px;
+  white-space: pre-wrap;
+}
+
+/* ========================================
+   元に戻すトースト
+   ======================================== */
+.undo-toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #323232;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  opacity: 0;
+  transition: all 0.3s ease;
+  max-width: 90%;
+}
+
+.undo-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.undo-toast-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.undo-toast-text {
+  font-size: 14px;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+
+.undo-btn {
+  background: transparent;
+  border: none;
+  color: #4CAF50;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.undo-btn:hover {
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.undo-btn:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .undo-toast {
+    bottom: 70px;
+    max-width: 85%;
+  }
+
+  .undo-toast-text {
+    max-width: 200px;
+  }
+}
+
+/* ========================================
+   データ分析モーダル
+   ======================================== */
+.analytics-icon-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.analytics-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.analytics-icon-btn:active {
+  transform: scale(0.95);
+}
+
+.analytics-section {

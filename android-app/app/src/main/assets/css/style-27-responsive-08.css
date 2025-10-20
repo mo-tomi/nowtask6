@@ -1,0 +1,370 @@
+    stroke: #e0e0e0;
+  }
+
+  .icon-btn:hover svg {
+    stroke: #ffffff;
+  }
+}
+
+/* ハイコントラストモード時のアイコン */
+@media (prefers-contrast: more) {
+  svg {
+    stroke-width: 3px;
+  }
+
+  button svg,
+  a svg,
+  [role="button"] svg {
+    stroke-width: 3;
+  }
+
+  .icon-btn {
+    border: 2px solid #000000;
+    border-radius: 8px;
+  }
+
+  .icon-btn:hover {
+    background-color: #000000;
+  }
+
+  .icon-btn:hover svg {
+    stroke: #ffffff;
+  }
+}
+
+  .bulk-cancel-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .bulk-selection-count {
+    font-size: 13px;
+  }
+
+  .btn-link {
+    font-size: 12px;
+    padding: 4px 6px;
+  }
+
+  .bulk-toolbar-actions {
+    gap: 4px;
+  }
+
+  .bulk-action-btn-with-label {
+    padding: 6px 8px;
+    font-size: 10px;
+    gap: 2px;
+  }
+
+  .bulk-action-btn-with-label svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* ========================================
+   検索・フィルター・ソート機能
+   ======================================== */
+
+/* 検索バー */
+.search-container {
+  position: relative;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-input-wrapper:focus-within {
+  border-color: #000000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+.search-icon {
+  color: #9e9e9e;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+#search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: #212121;
+  background: transparent;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+#search-input::placeholder {
+  color: #9e9e9e;
+}
+
+.search-clear-btn {
+  background: none;
+  border: none;
+  color: #757575;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 8px;
+  line-height: 1;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.search-clear-btn:hover {
+  background-color: #f5f5f5;
+  color: #212121;
+}
+
+.search-clear-btn:active {
+  background-color: #e0e0e0;
+}
+
+/* 検索履歴 */
+.search-history {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-top: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.search-history-item {
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #424242;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.search-history-item:hover {
+  background-color: #f5f5f5;
+}
+
+.search-history-item svg {
+  color: #9e9e9e;
+  flex-shrink: 0;
+}
+
+.search-history-item:not(:last-child) {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* 検索結果のハイライト */
+.search-highlight {
+  background-color: #ffeb3b;
+  font-weight: 500;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+/* フィルター・ソートコンテナ */
+.filter-sort-container {
+  background: #fafafa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.sort-select {
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #212121;
+  background: #ffffff;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  flex: 1;
+  max-width: 250px;
+}
+
+.sort-select:hover {
+  border-color: #bdbdbd;
+}
+
+.sort-select:focus {
+  border-color: #000000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+/* フィルターグループ */
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* フィルターボタン */
+.filter-btn {
+  padding: 8px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 20px;
+  background: #ffffff;
+  color: #616161;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  outline: none;
+}
+
+.filter-btn:hover {
+  border-color: #bdbdbd;
+  background-color: #f5f5f5;
+  transform: translateY(-1px);
+}
+
+.filter-btn:active {
+  transform: translateY(0);
+}
+
+.filter-btn.active {
+  border-color: #000000;
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.filter-btn-clear {
+  padding: 8px 16px;
+  border: 2px solid #e57373;
+  border-radius: 20px;
+  background: #ffffff;
+  color: #d32f2f;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  outline: none;
+}
+
+.filter-btn-clear:hover {
+  border-color: #d32f2f;
+  background-color: #ffebee;
+  transform: translateY(-1px);
+}
+
+.filter-btn-clear:active {
+  transform: translateY(0);
+  background-color: #ffcdd2;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 600px) {
+  .filter-sort-container {
+    padding: 12px;
+  }
+
+  .filter-btn,
+  .filter-btn-clear {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .sort-select {
+    font-size: 13px;
+    max-width: 100%;
+  }
+
+  .search-input-wrapper {
+    padding: 8px 10px;
+  }
+
+  #search-input {
+    font-size: 13px;
+  }
+}
+/* ========================================
+   複数選択ボタン（ゲージ下部）
+   ======================================== */
+.bulk-select-button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.bulk-select-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  background: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 8px;
+  color: #000000;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.bulk-select-toggle-btn:hover {
+  background: #f5f5f5;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bulk-select-toggle-btn:active {
+  transform: translateY(0);
+  background: #eeeeee;
+}
+
+.bulk-select-toggle-btn.active {
+  background: #000000;
+  color: #ffffff;
+}
+
+.bulk-select-toggle-btn.active:hover {
+  background: #333333;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 600px) {
+  .bulk-select-button-container {
+    padding: 10px 12px;
+  }
+
+  .bulk-select-toggle-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .bulk-select-toggle-btn svg {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+  }
+}

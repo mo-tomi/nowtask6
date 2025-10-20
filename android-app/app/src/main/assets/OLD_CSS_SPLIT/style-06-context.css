@@ -1,0 +1,501 @@
+.analytics-section {
+  margin-bottom: 32px;
+}
+
+.analytics-section:last-child {
+  margin-bottom: 0;
+}
+
+.analytics-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.analytics-description {
+  font-size: 14px;
+  color: #757575;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.ranking-item:hover {
+  background: #e0e0e0;
+  transform: translateX(4px);
+}
+
+.ranking-exclude-btn {
+  background: rgba(244, 67, 54, 0.1);
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #f44336;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.ranking-exclude-btn:hover {
+  background: rgba(244, 67, 54, 0.2);
+  transform: scale(1.1);
+}
+
+.ranking-exclude-btn:active {
+  transform: scale(0.95);
+}
+
+.ranking-position {
+  font-size: 18px;
+  font-weight: 700;
+  color: #757575;
+  min-width: 36px;
+  text-align: center;
+}
+
+.ranking-position.gold {
+  color: #ffd700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.ranking-position.silver {
+  color: #c0c0c0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.ranking-position.bronze {
+  color: #cd7f32;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.ranking-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ranking-task-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 4px;
+  word-wrap: break-word;
+}
+
+.ranking-time {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000000;
+  white-space: nowrap;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+  background: #e0e0e0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #757575;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #000000;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-unit {
+  font-size: 16px;
+  color: #757575;
+  margin-left: 4px;
+}
+
+.empty-analytics {
+  text-align: center;
+  padding: 40px 20px;
+  color: #9e9e9e;
+  font-size: 14px;
+}
+
+@media (max-width: 600px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-value {
+    font-size: 28px;
+  }
+
+  .ranking-position {
+    font-size: 16px;
+    min-width: 28px;
+  }
+
+  .ranking-item {
+    padding: 12px;
+  }
+}
+
+/* ========================================
+   年間空き時間グラフ
+   ======================================== */
+.yearly-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.chart-container {
+  background: #f5f5f5;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #e0e0e0;
+}
+
+.chart-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.chart-bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  height: 200px;
+  padding: 0 4px;
+}
+
+.chart-bar-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.chart-bar-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
+}
+
+.chart-bar {
+  width: 100%;
+  max-width: 32px;
+  background: linear-gradient(180deg, #666666 0%, #000000 100%);
+  border-radius: 4px 4px 0 0;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 4px;
+  min-height: 4px;
+}
+
+.chart-bar:hover {
+  background: linear-gradient(180deg, #888888 0%, #333333 100%);
+  transform: scaleY(1.05);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.chart-bar-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.chart-bar:hover .chart-bar-label {
+  opacity: 1;
+}
+
+.chart-month-label {
+  font-size: 11px;
+  color: #757575;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .yearly-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-container {
+    padding: 16px;
+  }
+
+  .chart-title {
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+
+  .chart-bars {
+    height: 160px;
+    gap: 4px;
+    padding: 0 2px;
+  }
+
+  .chart-bar {
+    max-width: 24px;
+  }
+
+  .chart-bar-label {
+    font-size: 8px;
+  }
+
+  .chart-month-label {
+    font-size: 9px;
+  }
+}
+
+/* ========================================
+   時間オーバー警告モーダル
+   ======================================== */
+.overload-warning {
+  background: #f5f5f5;
+  border-left: 4px solid #000000;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.overload-message {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.overload-message strong {
+  color: #000000;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.overload-description {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.overload-tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.overload-tasks-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.overload-tasks-list::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.overload-tasks-list::-webkit-scrollbar-thumb {
+  background: #cccccc;
+  border-radius: 4px;
+}
+
+.overload-tasks-list::-webkit-scrollbar-thumb:hover {
+  background: #999999;
+}
+
+.overload-task-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.overload-task-item:hover {
+  background: #f9f9f9;
+  border-color: #cccccc;
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.overload-task-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.overload-task-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 6px;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+
+.overload-task-time {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+.overload-task-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn-edit-task,
+.btn-postpone-task,
+.btn-delete-task {
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.btn-edit-task:hover {
+  background: #e0e0e0;
+  border-color: #cccccc;
+  color: #000000;
+  transform: scale(1.05);
+}
+
+.btn-postpone-task:hover {
+  background: #e0e0e0;
+  border-color: #cccccc;
+  color: #000000;
+  transform: scale(1.05);
+}
+
+.btn-delete-task:hover {
+  background: #ffebee;
+  border-color: #ef9a9a;
+  color: #d32f2f;
+  transform: scale(1.05);
+}
+
+.btn-edit-task:active,
+.btn-postpone-task:active,
+.btn-delete-task:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 600px) {
+  .overload-warning {
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .overload-message {
+    font-size: 15px;
+  }
+
+  .overload-message strong {
+    font-size: 17px;
+  }
+
+  .overload-description {
+    font-size: 13px;
+  }
+
+  .overload-task-item {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .overload-task-title {
+    font-size: 14px;
+  }
+
+  .overload-task-time {
+    font-size: 12px;
+  }
+
+  .btn-edit-task,
+  .btn-postpone-task,
+  .btn-delete-task {
+    width: 32px;
+    height: 32px;
+  }
+
+  .btn-edit-task svg,
+  .btn-postpone-task svg,
+  .btn-delete-task svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* ========================================
+   テンプレートモーダル
