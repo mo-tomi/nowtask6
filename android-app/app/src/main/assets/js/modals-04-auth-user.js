@@ -27,21 +27,26 @@ function addRoutine() {
       }
     });
 
-    // 緊急フラグと優先順位を取得
+    // 緊急フラグと優先順位を取得（要素が見つからない場合はデフォルト値を使用）
     const urgentCheckbox = document.querySelector(`.routine-urgent-input[data-index="${index}"]`);
     const prioritySelect = document.querySelector(`.routine-priority-input[data-index="${index}"]`);
+    // nullチェック: 要素が存在しない場合はデフォルト値を設定
     const urgent = urgentCheckbox ? urgentCheckbox.checked : false;
     const priority = prioritySelect ? prioritySelect.value : '';
 
-    // 期間設定を取得
+    // 期間設定を取得（要素が見つからない場合はデフォルト値'none'を使用）
     const dateRangeRadios = document.querySelectorAll(`.routine-daterange-radio[data-index="${index}"]`);
-    let dateRangeType = 'none';
-    dateRangeRadios.forEach(radio => {
-      if (radio.checked) {
-        dateRangeType = radio.value;
-      }
-    });
+    let dateRangeType = 'none'; // デフォルト値
+    // nullチェック: NodeListが空でない場合のみ処理
+    if (dateRangeRadios && dateRangeRadios.length > 0) {
+      dateRangeRadios.forEach(radio => {
+        if (radio && radio.checked) {
+          dateRangeType = radio.value;
+        }
+      });
+    }
 
+    // 日付入力欄を取得（nullチェック付き）
     const startDateInput = document.querySelector(`.routine-daterange-start[data-index="${index}"]`);
     const endDateInput = document.querySelector(`.routine-daterange-end[data-index="${index}"]`);
     const dateRange = {
@@ -125,21 +130,26 @@ function saveSettings() {
         }
       });
 
-      // 緊急フラグと優先順位を取得
+      // 緊急フラグと優先順位を取得（要素が見つからない場合はデフォルト値を使用）
       const urgentCheckbox = document.querySelector(`.routine-urgent-input[data-index="${index}"]`);
       const prioritySelect = document.querySelector(`.routine-priority-input[data-index="${index}"]`);
+      // nullチェック: 要素が存在しない場合はデフォルト値を設定
       const urgent = urgentCheckbox ? urgentCheckbox.checked : false;
       const priority = prioritySelect ? prioritySelect.value : '';
 
-      // 期間設定を取得
+      // 期間設定を取得（要素が見つからない場合はデフォルト値'none'を使用）
       const dateRangeRadios = document.querySelectorAll(`.routine-daterange-radio[data-index="${index}"]`);
-      let dateRangeType = 'none';
-      dateRangeRadios.forEach(radio => {
-        if (radio.checked) {
-          dateRangeType = radio.value;
-        }
-      });
+      let dateRangeType = 'none'; // デフォルト値
+      // nullチェック: NodeListが空でない場合のみ処理
+      if (dateRangeRadios && dateRangeRadios.length > 0) {
+        dateRangeRadios.forEach(radio => {
+          if (radio && radio.checked) {
+            dateRangeType = radio.value;
+          }
+        });
+      }
 
+      // 日付入力欄を取得（nullチェック付き）
       const startDateInput = document.querySelector(`.routine-daterange-start[data-index="${index}"]`);
       const endDateInput = document.querySelector(`.routine-daterange-end[data-index="${index}"]`);
       const dateRange = {
