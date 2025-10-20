@@ -1,0 +1,47 @@
+# Android
+*.jks
+*.keystore
+local.properties
+signing.properties
+.gradle/
+build/
+.idea/
+*.iml
+*.apk
+*.aab
+*.zip
+
+# Firebase & Sensitive
+google-services.json
+firebaserc
+
+# Mac
+.DS_Store
+.AppleDouble
+.LSOverride
+*.swp
+*.swo
+
+# Windows
+Thumbs.db
+nul
+
+# Temporary files
+*.log
+*.bak
+*.tmp
+~$*
+
+# Build artifacts
+bin/
+obj/
+dist/
+target/
+
+# Node modules (if any)
+node_modules/
+
+# IDE
+.vscode/
+*.sublime-project
+*.sublime-workspace

@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace 'com.nowtask.app'
-    compileSdk 33
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.nowtask.app" // ここは自分のパッケージ名に変更してください
-        minSdk 24 // Android 7.0以上
-        targetSdk 33
+        minSdk 26 // Android 8.0以上
+        targetSdk 35
         versionCode 1
         versionName "1.0"
 
