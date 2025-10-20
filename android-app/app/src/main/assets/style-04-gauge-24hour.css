@@ -1,0 +1,320 @@
+/* ========================================
+   24時間ゲージ - 100点シンプル・モノクロデザイン
+   ======================================== */
+
+/* コンテナ - シンプルでクリーンなデザイン */
+.time-gauge-container {
+  position: relative;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e0e0e0;
+  transition: box-shadow 0.3s ease, border-left-color 0.5s ease;
+}
+
+.time-gauge-container:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* タスク密度による境界線の変化（モノクロ） - スムーズな色遷移 */
+.time-gauge-container.density-green {
+  border-left: 4px solid #000000;
+  transition: border-left-color 0.5s ease;
+}
+
+.time-gauge-container.density-yellow {
+  border-left: 4px solid #666666;
+  transition: border-left-color 0.5s ease;
+}
+
+.time-gauge-container.density-red {
+  border-left: 4px solid #333333;
+  transition: border-left-color 0.5s ease;
+}
+
+/* ヘッダーセクション */
+.time-gauge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  gap: 12px;
+}
+
+/* ナビゲーションボタン - シンプルデザイン */
+.gauge-nav-btn {
+  background: #f5f5f5;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  color: #333333;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.gauge-nav-btn:hover {
+  background: #e0e0e0;
+  border-color: #999999;
+  color: #000000;
+}
+
+.gauge-nav-btn:active {
+  background: #d0d0d0;
+}
+
+.gauge-nav-btn:focus {
+  outline: 2px solid #000000;
+  outline-offset: 2px;
+}
+
+/* 中央コンテンツエリア */
+.gauge-header-center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* 日付ラベル */
+.gauge-date-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+/* 現在時刻表示 - シンプルでクリア */
+.current-time {
+  font-size: 28px;
+  font-weight: 700;
+  color: #000000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  letter-spacing: 1.5px;
+  line-height: 1;
+}
+
+/* ラベル */
+.gauge-label {
+  font-size: 14px;
+  color: #666666;
+  font-weight: 500;
+  flex: 1;
+  text-align: center;
+  min-width: 120px;
+}
+
+/* 残りタスク表示 - モノクロシンプル */
+.remaining-tasks {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+  letter-spacing: 0.3px;
+  background: #f5f5f5;
+  color: #333333;
+  border: 1px solid #d0d0d0;
+}
+
+/* 密度に応じた表示の変化（モノクロ） */
+.density-green .remaining-tasks {
+  background: #000000;
+  color: #ffffff;
+  border-color: #000000;
+}
+
+.density-yellow .remaining-tasks {
+  background: #666666;
+  color: #ffffff;
+  border-color: #666666;
+}
+
+.density-red .remaining-tasks {
+  background: #333333;
+  color: #ffffff;
+  border-color: #333333;
+}
+
+/* ゲージバー本体 - シンプル・クリーン */
+.time-gauge {
+  position: relative;
+  height: 16px;
+  border-radius: 4px;
+  overflow: visible;
+  margin-bottom: 8px;
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
+}
+
+.time-gauge-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #f8f8f8;
+  border-radius: 6px;
+}
+
+/* グリッドライン - シンプル */
+.time-gauge-gridlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.time-gauge-gridlines .gridline {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 1px;
+  background: #d0d0d0;
+  opacity: 0.6;
+}
+
+/* 経過時間バー - モノクロ */
+.time-gauge-elapsed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: #cccccc;
+  transition: width 0.5s ease;
+  z-index: 1;
+  border-radius: 6px 0 0 6px;
+}
+
+/* 密度に応じた経過時間バーの色変化（モノクロ） */
+.density-green .time-gauge-elapsed {
+  background: #e0e0e0;
+}
+
+.density-yellow .time-gauge-elapsed {
+  background: #d0d0d0;
+}
+
+.density-red .time-gauge-elapsed {
+  background: #c0c0c0;
+}
+
+/* スケジュール済みバー - 明確な表示 */
+.time-gauge-scheduled {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: #666666;
+  border-left: 2px solid #333333;
+  border-right: 2px solid #333333;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+/* 自由時間バー - 白で明示 */
+.time-gauge-free {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: #ffffff;
+  transition: all 0.3s ease;
+  z-index: 1;
+  border-radius: 0 6px 6px 0;
+  border-right: 2px solid #e0e0e0;
+}
+
+/* 現在時刻マーカー - シンプルで明確 */
+.time-marker {
+  position: absolute;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background: #000000;
+  transition: left 0.5s ease;
+  z-index: 3;
+  border-radius: 1px;
+}
+
+/* 現在時刻マーカーの三角形を削除してシンプルに */
+.time-marker::before,
+.time-marker::after {
+  display: none;
+}
+
+/* ラベル - シンプルで読みやすい */
+.time-gauge-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #999999;
+  margin-top: 4px;
+  padding: 0 2px;
+  font-weight: 400;
+  letter-spacing: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.time-gauge-labels span {
+  position: relative;
+  padding: 4px 0;
+}
+
+.time-gauge-labels span:nth-child(3) {
+  font-weight: 700;
+  color: #000000;
+}
+
+.gauge-legend {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #616161;
+}
+
+.legend-color {
+  width: 24px;
+  height: 12px;
+  border-radius: 4px;
+}
+
+.legend-color.elapsed {
+  background: linear-gradient(90deg, #000000 0%, #333333 100%);
+}
+
+.legend-color.scheduled {
+  background: rgba(255, 152, 0, 0.3);
+  border: 2px solid #333333;
+}
+
+.legend-color.marker {
+  background: #000000;
+  width: 3px;
+  height: 16px;
+  border-radius: 2px;
+  box-shadow: 0 0 4px rgba(244, 67, 54, 0.5);
+}
+

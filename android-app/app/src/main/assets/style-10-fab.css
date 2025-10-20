@@ -1,0 +1,61 @@
+/* ========================================
+   FAB（Floating Action Button）
+   ======================================== */
+.fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #000000;
+  color: white;
+  border: none;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 50;
+  overflow: hidden;
+  position: relative;
+}
+
+/* リップルエフェクト */
+.fab::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.fab:active::before {
+  width: 100px;
+  height: 100px;
+}
+
+.fab:hover {
+  background-color: #333333;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  transform: scale(1.1) rotate(90deg);
+}
+
+.fab:active {
+  transform: scale(0.95) rotate(90deg);
+}
+
+.fab svg {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fab:hover svg {
+  transform: rotate(-90deg);
+}
+
