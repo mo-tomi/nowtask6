@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <!-- WebView（メインコンテンツ） -->
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <!-- スプラッシュ画面 -->
+    <RelativeLayout
+        android:id="@+id/splashView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
+        android:gravity="center">
+
+        <!-- ロゴまたはアプリ名 -->
+        <TextView
+            android:id="@+id/splashTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="nowtask"
+            android:textSize="48sp"
+            android:textColor="#333333"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-light" />
+
+        <!-- 読み込み中のメッセージ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/splashTitle"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="24dp"
+            android:text="読み込み中..."
+            android:textSize="16sp"
+            android:textColor="#666666" />
+
+        <!-- プログレスバー（くるくる回るやつ） -->
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/splashTitle"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="80dp"
+            android:indeterminateTint="#4CAF50" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
