@@ -1,0 +1,2082 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>モバイル表示モックアップ - nowtask</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #e0e0e0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .page-header {
+      max-width: 1200px;
+      margin: 0 auto 30px;
+      text-align: center;
+    }
+
+    .page-header h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #000;
+    }
+
+    .page-header p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .devices-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      justify-content: center;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* デバイスフレーム */
+    .device {
+      width: 375px;
+      background: #000;
+      border-radius: 36px;
+      padding: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .device::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150px;
+      height: 28px;
+      background: #000;
+      border-radius: 0 0 20px 20px;
+      z-index: 10;
+    }
+
+    .device-screen {
+      width: 100%;
+      height: 667px;
+      background: white;
+      border-radius: 24px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .screen-content {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      background: #f5f5f5;
+    }
+
+    .device-label {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #666;
+    }
+
+    /* アプリヘッダー */
+    .app-header {
+      background: white;
+      padding: 12px 16px;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .app-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #000;
+    }
+
+    .header-datetime {
+      font-size: 11px;
+      color: #999;
+      letter-spacing: 0.3px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .header-btn {
+      width: 32px;
+      height: 32px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .header-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    /* 24時間ゲージ */
+    .time-gauge {
+      background: white;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border: 1px solid #e0e0e0;
+    }
+
+    .time-gauge-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      gap: 12px;
+    }
+
+    .gauge-nav-btn {
+      background: #f5f5f5;
+      border: 1px solid #d0d0d0;
+      border-radius: 6px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 20px;
+      color: #333;
+      flex-shrink: 0;
+    }
+
+    .gauge-header-center {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex: 1;
+      gap: 8px;
+    }
+
+    .gauge-date-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #000;
+    }
+
+    .current-time {
+      font-size: 12px;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .remaining-tasks {
+      font-size: 12px;
+      color: #666;
+      white-space: nowrap;
+    }
+
+    .gauge-label {
+      font-size: 13px;
+      color: #333;
+      margin-bottom: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      display: none;
+    }
+
+    .gauge-wrapper {
+      margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .gauge-bar {
+      display: flex;
+      gap: 2px;
+      margin-bottom: 8px;
+      position: relative;
+      height: 32px;
+      background: #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .time-gauge-elapsed,
+    .time-gauge-scheduled,
+    .time-gauge-free {
+      position: absolute;
+      top: 0;
+      height: 100%;
+    }
+
+    .time-gauge-elapsed {
+      background: #666;
+      left: 0;
+    }
+
+    .time-gauge-scheduled {
+      background: #000;
+    }
+
+    .time-gauge-free {
+      background: #e0e0e0;
+    }
+
+    .time-marker {
+      position: absolute;
+      width: 3px;
+      height: 100%;
+      background: #f44336;
+      top: 0;
+      z-index: 10;
+    }
+
+    .time-marker::before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 6px solid #f44336;
+    }
+
+    .gauge-step {
+      flex: 1;
+      height: 24px;
+      background: #e0e0e0;
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .gauge-step.active {
+      background: #333;
+    }
+
+    .gauge-step.active.current-marker-highlight {
+      background: #f5f5f7 !important;
+      border: 2px solid #5f6368;
+      box-sizing: border-box;
+    }
+
+    /* Step-based gauge bar (for pattern comparison) */
+    .gauge-bar-2 {
+      display: flex;
+      gap: 2px;
+      margin-bottom: 8px;
+      position: relative;
+    }
+
+    .gauge-bar-2 .time-labels {
+      overflow: hidden;
+    }
+
+    .gauge-bar-2 .time-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* 時間表記 */
+    .time-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #999;
+      margin-top: 8px;
+      padding: 0 2px;
+    }
+
+    .time-label {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .gauge-elapsed {
+      background: linear-gradient(90deg, #777 0%, #666 100%);
+      position: relative;
+    }
+
+    .gauge-scheduled {
+      background: linear-gradient(90deg, #222 0%, #111 100%);
+      position: relative;
+    }
+
+    .gauge-free {
+      background: #efefef;
+      position: relative;
+    }
+
+    .gauge-elapsed::before,
+    .gauge-scheduled::before,
+    .gauge-free::before {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: rgba(255,255,255,0.2);
+    }
+
+    /* ゲージ凡例 */
+    .gauge-legend {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #efefef;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #666;
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+    }
+
+    .legend-elapsed {
+      background: #777;
+    }
+
+    .legend-scheduled {
+      background: #222;
+    }
+
+    .legend-free {
+      background: #e0e0e0;
+    }
+
+    /* タイムラインベース */
+    .timeline {
+      background: linear-gradient(to right, #f8f8f8 60px, white 60px);
+      padding-bottom: 80px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 60px 1fr;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .timeline-time {
+      text-align: right;
+      padding-right: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #222;
+      padding-top: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    /* パターン1: 右側チェックボックス */
+    .task-card-right {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px;
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      margin-right: 8px;
+    }
+
+    .task-body-right {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .task-checkbox-right {
+      width: 24px;
+      height: 24px;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      flex-shrink: 0;
+      cursor: pointer;
+      background: white;
+      margin-top: 2px;
+    }
+
+    .task-checkbox-right.checked {
+      background: #000;
+      border-color: #000;
+      position: relative;
+    }
+
+    .task-checkbox-right.checked::after {
+      content: '✓';
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* パターン2: 左側チェックボックス */
+    .task-card-left {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px;
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      margin-right: 8px;
+    }
+
+    .task-checkbox-left {
+      width: 24px;
+      height: 24px;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      flex-shrink: 0;
+      cursor: pointer;
+      background: white;
+      margin-top: 2px;
+    }
+
+    .task-checkbox-left.checked {
+      background: #000;
+      border-color: #000;
+      position: relative;
+    }
+
+    .task-checkbox-left.checked::after {
+      content: '✓';
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .task-body-left {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* パターン3: 円形チェックボックス（右） */
+    .task-card-circle {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px;
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      margin-right: 8px;
+    }
+
+    .task-body-circle {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .task-checkbox-circle {
+      width: 24px;
+      height: 24px;
+      border: 2px solid #ccc;
+      border-radius: 50%;
+      flex-shrink: 0;
+      cursor: pointer;
+      background: white;
+      margin-top: 2px;
+    }
+
+    .task-checkbox-circle.checked {
+      background: #000;
+      border-color: #000;
+      position: relative;
+    }
+
+    .task-checkbox-circle.checked::after {
+      content: '✓';
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* 完了状態 */
+    .task-card-right.completed,
+    .task-card-left.completed,
+    .task-card-circle.completed {
+      opacity: 0.6;
+      background: #fafafa;
+    }
+
+    .completed .task-title {
+      text-decoration: line-through;
+      color: #999;
+    }
+
+    .task-title {
+      font-weight: 500;
+      color: #000;
+      margin-bottom: 4px;
+      font-size: 14px;
+      word-wrap: break-word;
+    }
+
+    .task-meta {
+      font-size: 11px;
+      color: #999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .duration-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .duration-badge::before {
+      content: '⏱';
+      font-size: 9px;
+    }
+
+    .urgent-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: #ffe6e6;
+      color: #d63031;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .urgent-badge::before {
+      content: '⚠';
+      font-size: 9px;
+    }
+
+    /* サブタスク */
+    .expand-btn {
+      width: 18px;
+      height: 18px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      background: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 12px;
+      color: #666;
+      margin-right: 6px;
+      flex-shrink: 0;
+    }
+
+    .expand-btn.expanded::before {
+      content: '−';
+    }
+
+    .expand-btn.collapsed::before {
+      content: '+';
+    }
+
+    .subtask-badge {
+      background: #f0f0f0;
+      color: #666;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-weight: 500;
+      margin-left: 6px;
+    }
+
+    .subtasks-container {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .subtasks-container.hidden {
+      display: none;
+    }
+
+    .subtask-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px solid #f8f8f8;
+    }
+
+    .subtask-item:last-child {
+      border-bottom: none;
+    }
+
+    .subtask-checkbox {
+      width: 16px;
+      height: 16px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .subtask-checkbox.checked {
+      background: #000;
+      border-color: #000;
+      position: relative;
+    }
+
+    .subtask-checkbox.checked::after {
+      content: '✓';
+      color: white;
+      font-size: 11px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .subtask-text {
+      font-size: 12px;
+      color: #666;
+      flex: 1;
+    }
+
+    .subtask-text.completed {
+      text-decoration: line-through;
+      color: #999;
+    }
+
+    /* 時間重複表示（並列） */
+    .timeline-group {
+      display: grid;
+      grid-template-columns: 60px 1fr;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .timeline-tasks-parallel {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-right: 8px;
+    }
+
+    /* FABボタン */
+    .fab {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      background: #000;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      cursor: pointer;
+      z-index: 100;
+    }
+
+    .section-label {
+      background: #333;
+      color: white;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      position: sticky;
+      top: 57px;
+      z-index: 4;
+    }
+
+    /* タスク情報の整列 */
+    .task-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    /* タスク色バリエーション */
+    .task-card-right.priority-high,
+    .task-card-left.priority-high,
+    .task-card-circle.priority-high {
+      border-left: 4px solid #ff6b6b;
+      background: #fff5f5;
+    }
+
+    .task-card-right.priority-medium,
+    .task-card-left.priority-medium,
+    .task-card-circle.priority-medium {
+      border-left: 4px solid #ffa500;
+      background: #fffbf5;
+    }
+
+    .task-card-right.priority-low,
+    .task-card-left.priority-low,
+    .task-card-circle.priority-low {
+      border-left: 4px solid #4dabf7;
+      background: #f0f8ff;
+    }
+
+    .task-card-right.urgent,
+    .task-card-left.urgent,
+    .task-card-circle.urgent {
+      border-left: 4px solid #d63031;
+      background: #ffe6e6;
+    }
+
+    /* サブタスク時間表示 */
+    .subtask-time {
+      font-size: 10px;
+      color: #999;
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
+    .subtask-time.with-duration::before {
+      content: '';
+      margin: 0 4px;
+    }
+
+    /* 時間未指定タスク */
+    .task-card-right.timeless,
+    .task-card-left.timeless,
+    .task-card-circle.timeless {
+      background: #f9f9f9;
+    }
+
+    .timeless .task-title {
+      color: #666;
+    }
+
+    /* 複数選択ボタン */
+    .bulk-select-button-container {
+      padding: 12px 20px;
+      text-align: center;
+    }
+
+    .bulk-select-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      color: #333;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .bulk-select-toggle-btn:hover {
+      background: #f5f5f5;
+      border-color: #bdbdbd;
+    }
+
+    /* 完了済みセクション */
+    .completed-section {
+      margin-top: 24px;
+      padding: 0 20px;
+    }
+
+    .completed-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px 16px;
+      background: #f8f8f8;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: #666;
+      transition: all 0.2s ease;
+    }
+
+    .completed-toggle:hover {
+      background: #f0f0f0;
+    }
+
+    .toggle-icon {
+      font-size: 12px;
+      color: #999;
+      transition: transform 0.2s ease;
+    }
+
+    .toggle-icon.expanded {
+      transform: rotate(90deg);
+    }
+
+    .completed-count {
+      margin-left: auto;
+      color: #999;
+      font-size: 13px;
+    }
+
+    /* クイック入力バー */
+    .quick-add-bar {
+      position: fixed;
+      bottom: 0;
+      left: 12px;
+      right: 12px;
+      background: #000;
+      padding: 12px 16px;
+      border-radius: 0;
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
+      z-index: 100;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .quick-history-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      border-radius: 4px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .quick-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: white;
+      border-radius: 4px;
+      padding-right: 4px;
+      flex: 1;
+    }
+
+    .quick-input-wrapper input {
+      flex: 1;
+      padding: 10px 80px 10px 14px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      outline: none;
+      background: white;
+      color: #333;
+    }
+
+    .quick-input-wrapper input::placeholder {
+      color: #999;
+    }
+
+    .quick-input-actions {
+      position: absolute;
+      right: 4px;
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .quick-date-btn,
+    .quick-submit-btn {
+      background: #666;
+      border: 1px solid #555;
+      border-radius: 4px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: white;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .quick-submit-btn {
+      background: #000;
+      border-color: #000;
+    }
+
+    /* 新UI要素: ツールバー */
+    .floating-toolbar {
+      background: white;
+      padding: 8px 12px;
+      margin: 0 12px 12px 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border: 1px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: sticky;
+      top: 57px;
+      z-index: 4;
+    }
+
+    .toolbar-btn {
+      padding: 6px 12px;
+      background: #f5f5f5;
+      border: 1px solid #d0d0d0;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #333;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .toolbar-btn.active {
+      background: #000;
+      color: white;
+      border-color: #000;
+    }
+
+    .toolbar-divider {
+      width: 1px;
+      height: 20px;
+      background: #e0e0e0;
+      margin: 0 4px;
+    }
+
+    /* フィルターチップス */
+    .filter-chips-container {
+      padding: 8px 16px;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      background: #fafafa;
+    }
+
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background: #e0e0e0;
+      border-radius: 16px;
+      font-size: 11px;
+      color: #333;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .filter-chip.active {
+      background: #000;
+      color: white;
+    }
+
+    .filter-chip-close {
+      font-size: 14px;
+      font-weight: bold;
+      margin-left: 2px;
+    }
+
+    /* 過去のタスクセクション */
+    .past-tasks-section {
+      margin-top: 16px;
+    }
+
+    .date-section {
+      background: #f5f5f5;
+      padding: 8px 16px;
+      border-top: 1px solid #e0e0e0;
+      border-bottom: 1px solid #e0e0e0;
+      font-size: 12px;
+      font-weight: 600;
+      color: #666;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .date-badge {
+      background: #666;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    /* ヘッダー内のボタンバリエーション */
+    .header-btn.icon-only {
+      font-size: 14px;
+    }
+
+    .header-btn.with-badge {
+      position: relative;
+    }
+
+    .header-btn.with-badge::after {
+      content: '';
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 8px;
+      height: 8px;
+      background: #f44336;
+      border-radius: 50%;
+      border: 2px solid white;
+    }
+
+    /* タスクカード内メニューボタン */
+    .task-menu-btn {
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: transparent;
+      color: #999;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-left: auto;
+      padding: 0;
+      border-radius: 4px;
+      transition: background 0.2s ease;
+    }
+
+    .task-menu-btn:hover {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    /* セクションラベル内の追加ボタン */
+    .section-label-with-action {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #333;
+      color: white;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      position: sticky;
+      top: 57px;
+      z-index: 4;
+    }
+
+    .section-add-btn {
+      width: 24px;
+      height: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+
+    .section-add-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* 空の状態表示 */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #9e9e9e;
+    }
+
+    .empty-state svg {
+      margin: 0 auto 24px;
+      display: block;
+    }
+
+    .empty-state p {
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 12px;
+      color: #9e9e9e;
+    }
+
+    .empty-state small {
+      font-size: 14px;
+      color: #bdbdbd;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <h1>モバイル表示（375px幅）モックアップ</h1>
+    <p>実際のスマートフォンサイズでの表示確認用 - Androidアプリ実装版</p>
+  </div>
+
+  <div class="devices-container">
+    <!-- デバイス1: Androidアプリ実装版 -->
+    <div class="device">
+      <div class="device-screen">
+        <div class="screen-content">
+          <div class="app-header">
+            <div class="header-left">
+              <div class="app-title">nowtask</div>
+            </div>
+            <div class="header-actions">
+              <div class="header-btn" title="カレンダー">
+                <svg viewBox="0 0 24 24">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </div>
+              <div class="header-btn" title="アカウント">
+                <svg viewBox="0 0 24 24">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <div class="header-btn" title="設定">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+              </div>
+              <div class="header-btn" title="メニュー">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="1"></circle>
+                  <circle cx="12" cy="5" r="1"></circle>
+                  <circle cx="12" cy="19" r="1"></circle>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="time-gauge">
+            <div class="time-gauge-header">
+              <button class="gauge-nav-btn">‹</button>
+              <div class="gauge-header-center">
+                <div class="gauge-date-label">今日</div>
+                <time class="current-time">14:32</time>
+              </div>
+              <button class="gauge-nav-btn">›</button>
+            </div>
+            <div class="gauge-label" style="display: block;">本日の予定（6時間 / 24時間）</div>
+            <div class="gauge-wrapper">
+              <div class="gauge-bar-2">
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step active current-marker-highlight"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+              </div>
+              <div class="time-labels" style="gap: 2px; font-size: 11px;">
+                <span class="time-label">0:00</span>
+                <span class="time-label">6:00</span>
+                <span class="time-label">12:00</span>
+                <span class="time-label">18:00</span>
+                <span class="time-label">24:00</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-label-with-action">
+            <span>本日のタスク</span>
+            <button class="section-add-btn" title="タスク追加">+</button>
+          </div>
+
+          <!-- 複数選択ボタン -->
+          <div class="bulk-select-button-container">
+            <button type="button" class="bulk-select-toggle-btn">
+              ☑ 複数選択
+            </button>
+          </div>
+
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-time">09:00</div>
+              <div class="task-card-right priority-high">
+                <div class="task-body-right">
+                  <div class="task-title">会議の準備をする</div>
+                  <div class="task-meta">
+                    <span class="duration-badge">30分</span>
+                  </div>
+                </div>
+                <button class="task-menu-btn" title="メニュー">⋮</button>
+                <div class="task-checkbox-right"></div>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-time">09:30</div>
+              <div class="task-card-right completed priority-medium">
+                <div class="task-body-right">
+                  <div class="task-title">メールチェック</div>
+                  <div class="task-meta">
+                    <span class="duration-badge">15分</span>
+                  </div>
+                </div>
+                <button class="task-menu-btn" title="メニュー">⋮</button>
+                <div class="task-checkbox-right checked"></div>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-time">10:00</div>
+              <div class="task-card-right priority-high urgent">
+                <div class="task-body-right">
+                  <div class="task-header">
+                    <div class="expand-btn expanded"></div>
+                    <div class="task-title" style="margin-bottom: 0;">プロジェクト計画</div>
+                    <div class="subtask-badge">1/3完了</div>
+                  </div>
+                  <div class="task-meta">
+                    <span class="duration-badge">60分</span>
+                    <span class="urgent-badge">緊急</span>
+                  </div>
+
+                  <div class="subtasks-container">
+                    <div class="subtask-item">
+                      <div class="subtask-checkbox checked"></div>
+                      <div class="subtask-text completed">資料作成</div>
+                      <div class="subtask-time">10:00-10:20</div>
+                    </div>
+                    <div class="subtask-item">
+                      <div class="subtask-checkbox"></div>
+                      <div class="subtask-text">メンバー確認</div>
+                      <div class="subtask-time">10:20-10:40</div>
+                    </div>
+                    <div class="subtask-item">
+                      <div class="subtask-checkbox"></div>
+                      <div class="subtask-text">スケジュール調整</div>
+                      <div class="subtask-time">10:40-11:00</div>
+                    </div>
+                  </div>
+                </div>
+                <button class="task-menu-btn" title="メニュー">⋮</button>
+                <div class="task-checkbox-right"></div>
+              </div>
+            </div>
+
+            <!-- 時間重複の例 -->
+            <div class="timeline-group">
+              <div class="timeline-time">11:00</div>
+              <div class="timeline-tasks-parallel">
+                <div class="task-card-right priority-medium">
+                  <div class="task-body-right">
+                    <div class="task-title">ランチミーティング</div>
+                    <div class="task-meta">
+                      <span class="duration-badge">60分</span>
+                    </div>
+                  </div>
+                  <button class="task-menu-btn" title="メニュー">⋮</button>
+                  <div class="task-checkbox-right"></div>
+                </div>
+                <div class="task-card-right priority-low">
+                  <div class="task-body-right">
+                    <div class="task-title">日報作成</div>
+                    <div class="task-meta">
+                      <span class="duration-badge">15分</span>
+                    </div>
+                  </div>
+                  <button class="task-menu-btn" title="メニュー">⋮</button>
+                  <div class="task-checkbox-right"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-time">13:00</div>
+              <div class="task-card-right priority-high">
+                <div class="task-body-right">
+                  <div class="task-title">コードレビュー対応</div>
+                  <div class="task-meta">
+                    <span class="duration-badge">90分</span>
+                  </div>
+                </div>
+                <button class="task-menu-btn" title="メニュー">⋮</button>
+                <div class="task-checkbox-right"></div>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-time">14:30</div>
+              <div class="task-card-right priority-high urgent">
+                <div class="task-body-right">
+                  <div class="task-title">新機能の設計書作成</div>
+                  <div class="task-meta">
+                    <span class="duration-badge">120分</span>
+                    <span class="urgent-badge">緊急</span>
+                  </div>
+                </div>
+                <button class="task-menu-btn" title="メニュー">⋮</button>
+                <div class="task-checkbox-right"></div>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-time">16:30</div>
+              <div class="task-card-right priority-medium">
+                <div class="task-body-right">
+                  <div class="task-title">チームミーティング</div>
+                  <div class="task-meta">
+                    <span class="duration-badge">30分</span>
+                  </div>
+                </div>
+                <button class="task-menu-btn" title="メニュー">⋮</button>
+                <div class="task-checkbox-right"></div>
+              </div>
+            </div>
+
+            <!-- 時間未指定タスク -->
+            <div class="timeline-item">
+              <div class="timeline-time">—</div>
+              <div class="task-card-right timeless">
+                <div class="task-body-right">
+                  <div class="task-title">その他のタスク</div>
+                  <div class="task-meta">
+                    <span class="duration-badge">時間未定</span>
+                  </div>
+                </div>
+                <button class="task-menu-btn" title="メニュー">⋮</button>
+                <div class="task-checkbox-right"></div>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-time">—</div>
+              <div class="task-card-right timeless priority-low">
+                <div class="task-body-right">
+                  <div class="task-title">ドキュメント整理</div>
+                  <div class="task-meta">
+                    <span class="duration-badge">時間未定</span>
+                  </div>
+                </div>
+                <button class="task-menu-btn" title="メニュー">⋮</button>
+                <div class="task-checkbox-right"></div>
+              </div>
+            </div>
+
+            <!-- 完了済みセクション（折りたたみ） -->
+            <div class="completed-section">
+              <button class="completed-toggle">
+                <span class="toggle-icon">▶</span>
+                <span class="toggle-text">完了済み</span>
+                <span class="completed-count">(2)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- クイック入力バー（画面下部固定） -->
+          <div class="quick-add-bar">
+            <button class="quick-history-btn">◷</button>
+            <div class="quick-input-wrapper">
+              <input type="text" placeholder="タスク名を入力してEnter" />
+              <div class="quick-input-actions">
+                <button class="quick-date-btn">◷</button>
+                <button class="quick-submit-btn">✓</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="device-label">Androidアプリ実装版</div>
+    </div>
+
+    <!-- デバイス2: パターン0（数字のみ） -->
+    <div class="device">
+      <div class="device-screen">
+        <div class="screen-content">
+          <div class="app-header">
+            <div class="header-left">
+              <div class="app-title">nowtask</div>
+            </div>
+            <div class="header-actions">
+              <div class="header-btn" title="カレンダー">
+                <svg viewBox="0 0 24 24">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </div>
+              <div class="header-btn" title="アカウント">
+                <svg viewBox="0 0 24 24">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <div class="header-btn" title="設定">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+              </div>
+              <div class="header-btn" title="メニュー">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="1"></circle>
+                  <circle cx="12" cy="5" r="1"></circle>
+                  <circle cx="12" cy="19" r="1"></circle>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="time-gauge">
+            <div class="time-gauge-header">
+              <button class="gauge-nav-btn">‹</button>
+              <div class="gauge-header-center">
+                <div class="gauge-date-label">今日</div>
+                <time class="current-time">14:32</time>
+              </div>
+              <button class="gauge-nav-btn">›</button>
+            </div>
+            <div class="gauge-label" style="display: block;">本日の予定（6時間 / 24時間）</div>
+            <div class="gauge-wrapper">
+              <div class="gauge-bar-2">
+                <div class="gauge-step active current-marker-highlight"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+              </div>
+              <div class="time-labels" style="gap: 2px; font-size: 9px;">
+                <div class="time-label">0</div>
+                <div class="time-label">1</div>
+                <div class="time-label">2</div>
+                <div class="time-label">3</div>
+                <div class="time-label">4</div>
+                <div class="time-label">5</div>
+                <div class="time-label">6</div>
+                <div class="time-label">7</div>
+                <div class="time-label">8</div>
+                <div class="time-label">9</div>
+                <div class="time-label">10</div>
+                <div class="time-label">11</div>
+                <div class="time-label">12</div>
+                <div class="time-label">13</div>
+                <div class="time-label">14</div>
+                <div class="time-label">15</div>
+                <div class="time-label">16</div>
+                <div class="time-label">17</div>
+                <div class="time-label">18</div>
+                <div class="time-label">19</div>
+                <div class="time-label">20</div>
+                <div class="time-label">21</div>
+                <div class="time-label">22</div>
+                <div class="time-label">23</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-label-with-action">
+            <span>パターン0: 数字のみ（0-23）</span>
+            <button class="section-add-btn" title="タスク追加">+</button>
+          </div>
+
+          <!-- 空の状態表示 -->
+          <div class="empty-state">
+            <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="#d0d0d0" stroke-width="2">
+              <circle cx="50" cy="50" r="35" stroke-dasharray="5,5"></circle>
+              <path d="M50 30 L50 50 L65 50" stroke-linecap="round"></path>
+            </svg>
+            <p>タスクがありません</p>
+            <small>+ ボタンからタスクを追加しましょう</small>
+          </div>
+
+          <div class="fab">+</div>
+        </div>
+      </div>
+      <div class="device-label">パターン0: 数字のみ（0-23）</div>
+    </div>
+
+    <!-- デバイス3: パターン3（3時間区切り） -->
+    <div class="device">
+      <div class="device-screen">
+        <div class="screen-content">
+          <div class="app-header">
+            <div class="header-left">
+              <div class="app-title">nowtask</div>
+            </div>
+            <div class="header-actions">
+              <div class="header-btn" title="カレンダー">
+                <svg viewBox="0 0 24 24">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </div>
+              <div class="header-btn" title="アカウント">
+                <svg viewBox="0 0 24 24">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <div class="header-btn" title="設定">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+              </div>
+              <div class="header-btn" title="メニュー">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="1"></circle>
+                  <circle cx="12" cy="5" r="1"></circle>
+                  <circle cx="12" cy="19" r="1"></circle>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="time-gauge">
+            <div class="time-gauge-header">
+              <button class="gauge-nav-btn">‹</button>
+              <div class="gauge-header-center">
+                <div class="gauge-date-label">今日</div>
+                <time class="current-time">14:32</time>
+              </div>
+              <button class="gauge-nav-btn">›</button>
+            </div>
+            <div class="gauge-label" style="display: block;">本日の予定（6時間 / 24時間）</div>
+            <div class="gauge-wrapper">
+              <div class="gauge-bar-2">
+                <div class="gauge-step active current-marker-highlight"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+              </div>
+              <div class="time-labels" style="gap: 2px; font-size: 9px;">
+                <div class="time-label">0:00</div>
+                <div class="time-label"></div>
+                <div class="time-label"></div>
+                <div class="time-label">3:00</div>
+                <div class="time-label"></div>
+                <div class="time-label"></div>
+                <div class="time-label">6:00</div>
+                <div class="time-label"></div>
+                <div class="time-label"></div>
+                <div class="time-label">9:00</div>
+                <div class="time-label"></div>
+                <div class="time-label"></div>
+                <div class="time-label">12:00</div>
+                <div class="time-label"></div>
+                <div class="time-label"></div>
+                <div class="time-label">15:00</div>
+                <div class="time-label"></div>
+                <div class="time-label"></div>
+                <div class="time-label">18:00</div>
+                <div class="time-label"></div>
+                <div class="time-label"></div>
+                <div class="time-label">21:00</div>
+                <div class="time-label"></div>
+                <div class="time-label"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-label-with-action">
+            <span>パターン3: 3時間区切り表記</span>
+            <button class="section-add-btn" title="タスク追加">+</button>
+          </div>
+
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-time">09:00</div>
+              <div class="task-card-right priority-high">
+                <div class="task-body-right">
+                  <div class="task-title">会議の準備をする</div>
+                  <div class="task-meta">
+                    <span class="duration-badge">30分</span>
+                  </div>
+                </div>
+                <button class="task-menu-btn" title="メニュー">⋮</button>
+                <div class="task-checkbox-right"></div>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-time">09:30</div>
+              <div class="task-card-right completed priority-medium">
+                <div class="task-body-right">
+                  <div class="task-title">メールチェック</div>
+                  <div class="task-meta">
+                    <span class="duration-badge">15分</span>
+                  </div>
+                </div>
+                <button class="task-menu-btn" title="メニュー">⋮</button>
+                <div class="task-checkbox-right checked"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fab">+</div>
+        </div>
+      </div>
+      <div class="device-label">パターン3: 3時間区切り表記</div>
+    </div>
+
+    <!-- デバイス4: 新UI - ツールバー + フィルタ + 過去タスク -->
+    <div class="device">
+      <div class="device-screen">
+        <div class="screen-content">
+          <div class="app-header">
+            <div class="header-left">
+              <div class="app-title">nowtask</div>
+            </div>
+            <div class="header-actions">
+              <div class="header-btn with-badge icon-only" title="複数選択">□</div>
+              <div class="header-btn" title="カレンダー">◷</div>
+              <div class="header-btn" title="設定">⚙</div>
+            </div>
+          </div>
+
+          <div class="time-gauge">
+            <div class="time-gauge-header">
+              <button class="gauge-nav-btn">‹</button>
+              <div class="gauge-header-center">
+                <div class="gauge-date-label">今日</div>
+                <time class="current-time">14:32</time>
+              </div>
+              <button class="gauge-nav-btn">›</button>
+            </div>
+            <div class="gauge-wrapper">
+              <div class="gauge-bar-2">
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step active current-marker-highlight"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+              </div>
+              <div class="time-labels" style="gap: 2px; font-size: 11px;">
+                <span class="time-label">0:00</span>
+                <span class="time-label">6:00</span>
+                <span class="time-label">12:00</span>
+                <span class="time-label">18:00</span>
+                <span class="time-label">24:00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ツールバー（複数選択 + フィルタ） -->
+          <div class="floating-toolbar">
+            <button class="toolbar-btn active">■ 選択</button>
+            <div class="toolbar-divider"></div>
+            <button class="toolbar-btn">● 緊急</button>
+            <button class="toolbar-btn">▲ 高</button>
+            <button class="toolbar-btn">□ 全て</button>
+          </div>
+
+          <!-- フィルターチップス -->
+          <div class="filter-chips-container">
+            <div class="filter-chip active">
+              緊急
+              <span class="filter-chip-close">×</span>
+            </div>
+            <div class="filter-chip">優先度: 高</div>
+            <div class="filter-chip">未完了のみ</div>
+          </div>
+
+          <div class="section-label-with-action">
+            <span>本日のタスク</span>
+            <button class="section-add-btn" title="タスク追加">+</button>
+          </div>
+
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-time">14:30</div>
+              <div class="task-card-right priority-high urgent">
+                <div class="task-body-right">
+                  <div class="task-title">新機能の設計書作成</div>
+                  <div class="task-meta">
+                    <span class="duration-badge">120分</span>
+                    <span class="urgent-badge">緊急</span>
+                  </div>
+                </div>
+                <button class="task-menu-btn" title="メニュー">⋮</button>
+                <div class="task-checkbox-right"></div>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-time">16:30</div>
+              <div class="task-card-right priority-high">
+                <div class="task-body-right">
+                  <div class="task-title">チームミーティング</div>
+                  <div class="task-meta">
+                    <span class="duration-badge">30分</span>
+                  </div>
+                </div>
+                <button class="task-menu-btn" title="メニュー">⋮</button>
+                <div class="task-checkbox-right"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 昨日のタスク -->
+          <div class="date-section">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span>▶</span>
+              <span>昨日 (2025/01/14)</span>
+            </div>
+            <button class="section-add-btn" title="タスク追加" style="position: relative; right: 0;">+</button>
+          </div>
+
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-time">09:00</div>
+              <div class="task-card-right completed priority-medium">
+                <div class="task-body-right">
+                  <div class="task-title">週次レポート作成</div>
+                  <div class="task-meta">
+                    <span class="duration-badge">60分</span>
+                  </div>
+                </div>
+                <button class="task-menu-btn" title="メニュー">⋮</button>
+                <div class="task-checkbox-right checked"></div>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-time">14:00</div>
+              <div class="task-card-right priority-high">
+                <div class="task-body-right">
+                  <div class="task-title">クライアント対応（未完了）</div>
+                  <div class="task-meta">
+                    <span class="duration-badge">45分</span>
+                  </div>
+                </div>
+                <button class="task-menu-btn" title="メニュー">⋮</button>
+                <div class="task-checkbox-right"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 一昨日のタスク -->
+          <div class="date-section">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span>▶</span>
+              <span>一昨日 (2025/01/13)</span>
+            </div>
+            <button class="section-add-btn" title="タスク追加" style="position: relative; right: 0;">+</button>
+          </div>
+
+          <div class="quick-add-bar">
+            <button class="quick-history-btn">◷</button>
+            <div class="quick-input-wrapper">
+              <input type="text" placeholder="タスク名を入力してEnter" />
+              <div class="quick-input-actions">
+                <button class="quick-date-btn">◷</button>
+                <button class="quick-submit-btn">✓</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="device-label">新UI: ツールバー + フィルタ + 過去タスク</div>
+    </div>
+
+    <!-- デバイス5: ヘッダー内複数選択パターン -->
+    <div class="device">
+      <div class="device-screen">
+        <div class="screen-content">
+          <div class="app-header">
+            <div class="header-left">
+              <div class="app-title">nowtask</div>
+            </div>
+            <div class="header-actions">
+              <div class="header-btn active" title="複数選択モード" style="background: #000; color: white;">■</div>
+              <div class="header-btn" title="フィルタ">⊙</div>
+              <div class="header-btn" title="カレンダー">◷</div>
+              <div class="header-btn" title="設定">⚙</div>
+            </div>
+          </div>
+
+          <div class="time-gauge">
+            <div class="time-gauge-header">
+              <button class="gauge-nav-btn">‹</button>
+              <div class="gauge-header-center">
+                <div class="gauge-date-label">今日</div>
+                <time class="current-time">14:32</time>
+              </div>
+              <button class="gauge-nav-btn">›</button>
+            </div>
+            <div class="gauge-wrapper">
+              <div class="gauge-bar-2">
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step active"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step active current-marker-highlight"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+                <div class="gauge-step"></div>
+              </div>
+              <div class="time-labels" style="gap: 2px; font-size: 11px;">
+                <span class="time-label">0:00</span>
+                <span class="time-label">6:00</span>
+                <span class="time-label">12:00</span>
+                <span class="time-label">18:00</span>
+                <span class="time-label">24:00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 選択中のアクションバー -->
+          <div class="floating-toolbar" style="background: #333;">
+            <span style="color: white; font-size: 12px; font-weight: 600;">3件選択中</span>
+            <div style="flex: 1;"></div>
+            <button class="toolbar-btn" style="background: white;">✓ 完了</button>
+            <button class="toolbar-btn" style="background: white;">× 削除</button>
+            <button class="toolbar-btn" style="background: white;">◷ 日時変更</button>
+          </div>
+
+          <div class="section-label-with-action">
+            <span>本日のタスク</span>
+            <button class="section-add-btn" title="タスク追加">+</button>
+          </div>
+
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-time">09:00</div>
+              <div class="task-card-right priority-high" style="border: 2px solid #000;">
+                <div class="task-body-right">
+                  <div class="task-title">会議の準備をする</div>
+                  <div class="task-meta">
+                    <span class="duration-badge">30分</span>
+                  </div>
+                </div>
+                <button class="task-menu-btn" title="メニュー">⋮</button>
+                <div class="task-checkbox-right checked"></div>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-time">10:00</div>
+              <div class="task-card-right priority-high urgent" style="border: 2px solid #000;">
+                <div class="task-body-right">
+                  <div class="task-title">プロジェクト計画</div>
+                  <div class="task-meta">
+                    <span class="duration-badge">60分</span>
+                    <span class="urgent-badge">緊急</span>
+                  </div>
+                </div>
+                <button class="task-menu-btn" title="メニュー">⋮</button>
+                <div class="task-checkbox-right checked"></div>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-time">13:00</div>
+              <div class="task-card-right priority-high">
+                <div class="task-body-right">
+                  <div class="task-title">コードレビュー対応</div>
+                  <div class="task-meta">
+                    <span class="duration-badge">90分</span>
+                  </div>
+                </div>
+                <button class="task-menu-btn" title="メニュー">⋮</button>
+                <div class="task-checkbox-right"></div>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-time">14:30</div>
+              <div class="task-card-right priority-high urgent" style="border: 2px solid #000;">
+                <div class="task-body-right">
+                  <div class="task-title">新機能の設計書作成</div>
+                  <div class="task-meta">
+                    <span class="duration-badge">120分</span>
+                    <span class="urgent-badge">緊急</span>
+                  </div>
+                </div>
+                <button class="task-menu-btn" title="メニュー">⋮</button>
+                <div class="task-checkbox-right checked"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="quick-add-bar">
+            <button class="quick-history-btn">◷</button>
+            <div class="quick-input-wrapper">
+              <input type="text" placeholder="タスク名を入力してEnter" />
+              <div class="quick-input-actions">
+                <button class="quick-date-btn">◷</button>
+                <button class="quick-submit-btn">✓</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="device-label">ヘッダー内複数選択 + 選択中アクションバー</div>
+    </div>
+
+  </div>
+
+
+</body>
+</html>

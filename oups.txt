@@ -1,0 +1,780 @@
+================================================================================
+                        nowtask Android App - Project Overview
+                     For Claude AI/OPS System Integration
+                                2025-10-20
+================================================================================
+
+## PROJECT SUMMARY
+
+**Project Name:** nowtask
+**Type:** Android Native Application
+**Tech Stack:** Kotlin, Gradle, Android SDK 26-35
+**Status:** Active Development
+**Target:** Google Play Store
+**Key Features:** Task management with Firebase sync, offline support, widgets
+
+---
+
+## REQUIREMENTS DEFINITION
+
+### 1. PROJECT OVERVIEW
+
+nowtask is a minimalist task management application featuring monochrome design.
+The project has fully transitioned from PWA to Android native development.
+
+- **Current Focus:** Android native app development
+- **Technology Stack:** Kotlin, Gradle, Android SDK
+- **Main Features:** WebView content display, Firebase integration, task management
+
+### 2. BUILD & EXECUTION
+
+**Build Steps:**
+```bash
+cd android-app
+./gradlew assembleDebug          # Debug build
+./gradlew bundleRelease          # Release build
+```
+
+**Requirements:**
+- Android Studio 2022.1+
+- Firebase setup (google-services.json in android-app/app/)
+- Java 11+
+
+### 3. DEVELOPMENT STANDARDS (Kotlin)
+
+- MainActivity.kt: Primary activity handling WebView setup, auth, Firebase
+- Activity layout: activity_main.xml
+- Database: Room with Firestore sync
+- Architecture: MVVM with Kotlin Coroutines
+
+### 4. DEBUG & TESTING
+
+**Log Collection:**
+```bash
+adb logcat -c                    # Clear logs
+adb logcat > docs/log.txt        # Save logs
+adb logcat | grep MainActivity   # Filter specific tags
+```
+
+**Key Tags to Monitor:**
+- MainActivity: Auth flow, Google Sign-In
+- FirestoreBridge: Data sync operations
+- WebView: JavaScript console output
+
+### 5. MAIN FEATURES
+
+#### 5.1 Routine Tasks (Î¸∆£Û_˝)
+- Automatic daily/periodic task generation
+- 22-day window: 7 past + today + 14 future
+- Customizable time ranges, priorities, urgency
+- Performance optimized to prevent duplicates
+
+**Data Structure:**
+```javascript
+{
+  id: "uuid",
+  name: "Task Name",
+  duration: 30,                  // minutes
+  startTime: "07:00",            // optional
+  endTime: "07:30",              // optional
+  urgent: false,
+  priority: "high|medium|low",
+  dateRange: {
+    type: "none|period",
+    startDate: null,
+    endDate: null
+  }
+}
+```
+
+---
+
+## APPLICATION ARCHITECTURE
+
+### SDK VERSIONS (Updated Oct 2025)
+- compileSdk: 35 (API level 35)
+- targetSdk: 35 (Google Play requirement)
+- minSdk: 26 (Android 8.0+)
+- Gradle Memory: 4GB (optimized)
+
+### DEPENDENCIES
+
+```gradle
+// Firebase
+implementation platform('com.google.firebase:firebase-bom:32.7.0')
+implementation 'com.google.firebase:firebase-firestore-ktx'
+implementation 'com.google.firebase:firebase-auth-ktx'
+
+// Google Sign-In
+implementation 'com.google.android.gms:play-services-auth:21.0.0'
+
+// Room Database
+implementation 'androidx.room:room-runtime:2.5.2'
+implementation 'androidx.room:room-ktx:2.5.2'
+
+// Kotlin Coroutines
+implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+
+// WorkManager (notifications)
+implementation 'androidx.work:work-runtime-ktx:2.8.1'
+```
+
+### PERMISSIONS
+
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- Android 13+ -->
+```
+
+---
+
+## FILE STRUCTURE & KEY FILES
+
+### AndroidManifest.xml
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="31">
+
+        <!-- Main Activity -->
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Quick Add Task Activity -->
+        <activity
+            android:name=".QuickAddTaskActivity"
+            android:exported="false"
+            android:theme="@android:style/Theme.Dialog" />
+
+        <!-- Task Widget -->
+        <receiver
+            android:name=".widget.TaskWidgetProvider"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
+
+        <!-- Gauge Widget (24-hour) -->
+        <receiver
+            android:name=".widget.GaugeWidgetProvider"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_gauge_info" />
+        </receiver>
+
+    </application>
+
+</manifest>
+```
+
+### build.gradle (App Level)
+```gradle
+// ¢◊ÍÏŸÎn build.gradle
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'com.google.devtools.ksp' version '1.9.20-1.0.14'
+    id 'com.google.gms.google-services'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.20'
+}
+
+android {
+    namespace 'com.nowtask.app'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.nowtask.app"
+        minSdk 26 // Android 8.0Â
+
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    // KotlinñÈ§÷ÈÍ
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    // Android˙,È§÷ÈÍ
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // Firebase BoMBill of Materials	
+    implementation platform('com.google.firebase:firebase-bom:32.7.0')
+
+    // Firebase Firestore
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+
+    // Firebase Authç<(™◊∑ÁÛ	
+    implementation 'com.google.firebase:firebase-auth-ktx'
+
+    // Google Sign-In
+    implementation 'com.google.android.gms:play-services-auth:21.0.0'
+
+    // Kotlinx Serialization
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0'
+
+    // Kotlin Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
+
+    // Room Database
+    implementation 'androidx.room:room-runtime:2.5.2'
+    implementation 'androidx.room:room-ktx:2.5.2'
+    ksp 'androidx.room:room-compiler:2.5.2'
+
+    // WorkManager (Â_˝()
+    implementation 'androidx.work:work-runtime-ktx:2.8.1'
+
+    // ∆π»(
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+```
+
+### Data Layer: AppDatabase.kt
+```kotlin
+package com.nowtask.app.data.local
+
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+
+/**
+ * Room Databasen·§ÛØÈπ
+ *
+ * «¸øŸ¸π§ÛπøÛπí°WDAOxn¢Øªπí–õ
+ */
+@Database(
+    entities = [KeyValueEntity::class],
+    version = 1,
+    exportSchema = false
+)
+@TypeConverters(Converters::class)
+abstract class AppDatabase : RoomDatabase() {
+
+    /**
+     * Key-Value DAO xn¢Øªπ
+     */
+    abstract fun keyValueDao(): KeyValueDao
+
+    companion object {
+        private const val DATABASE_NAME = "nowtask_database"
+
+        @Volatile
+        private var INSTANCE: AppDatabase? = null
+
+        /**
+         * «¸øŸ¸π§ÛπøÛπí÷ó∑Û∞Î»Û	
+         */
+        fun getInstance(context: Context): AppDatabase {
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDatabase::class.java,
+                    DATABASE_NAME
+                )
+                    .fallbackToDestructiveMigration()  // ﬁ§∞Ï¸∑ÁÛ1WBo«¸øŸ¸πíç\
+                    .build()
+
+                INSTANCE = instance
+                instance
+            }
+        }
+
+        /**
+         * ∆π»(§ÛπøÛπíØÍ¢
+         */
+        fun clearInstance() {
+            INSTANCE?.close()
+            INSTANCE = null
+        }
+    }
+}
+
+/**
+ * Room(nã	€ØÈπ
+ */
+class Converters {
+    /**
+     * SyncStatusíStringk	€
+     */
+    @androidx.room.TypeConverter
+    fun fromSyncStatus(status: SyncStatus): String {
+        return status.name
+    }
+
+    /**
+     * StringíSyncStatusk	€
+     */
+    @androidx.room.TypeConverter
+    fun toSyncStatus(value: String): SyncStatus {
+        return try {
+            SyncStatus.valueOf(value)
+        } catch (e: IllegalArgumentException) {
+            SyncStatus.SYNCED
+        }
+    }
+}
+```
+
+### KeyValueEntity.kt
+```kotlin
+package com.nowtask.app.data.local
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+/**
+ * Room Database(nKey-Value EntityØÈπ
+ *
+ * Firestoren«¸øÀ hí€'í›d_Åkey-valuebg›X
+ * Såkàä‚XnFirestoreBridgeh∑¸‡Ïπk#:gMã
+ */
+@Entity(tableName = "key_value_store")
+data class KeyValueEntity(
+    @PrimaryKey
+    val key: String,           // «¸øn≠¸ã: "nowtask_tasks", "nowtask_routines"	
+    val value: String,         // JSONbn«¸ø
+    val userId: String,        // Ê¸∂¸ID«¸øn@		
+    val timestamp: Long,       //  BÙ∞ÂBﬂÍ“	
+    val syncStatus: SyncStatus = SyncStatus.SYNCED,  // ∂K
+    val version: Int = 1       // «¸ø–¸∏ÁÛ
+)
+
+/**
+ * ∂KíhYEnum
+ */
+enum class SyncStatus {
+    SYNCED,         // Firestoreh
+    PENDING,        // FirestorexnÖa
+    SYNCING,        // -
+    FAILED          // 1W
+}
+```
+
+### KeyValueDao.kt
+```kotlin
+package com.nowtask.app.data.local
+
+import androidx.room.*
+import kotlinx.coroutines.flow.Flow
+
+/**
+ * Room Database(nDAOData Access Object	
+ *
+ * Key-Valueπ»¢xn¢Øªππ’íö©
+ */
+@Dao
+interface KeyValueDao {
+
+    /**
+     * «¸øí?e~_oÙ∞
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(entity: KeyValueEntity)
+
+    /**
+     * «¸øíÙ∞
+     */
+    @Update
+    suspend fun update(entity: KeyValueEntity)
+
+    /**
+     * «¸øíJd
+     */
+    @Delete
+    suspend fun delete(entity: KeyValueEntity)
+
+    /**
+     * ≠¸íöWf«¸øíJd
+     */
+    @Query("DELETE FROM key_value_store WHERE key = :key AND userId = :userId")
+    suspend fun deleteByKey(key: String, userId: String)
+
+    /**
+     * ≠¸íöWf«¸øí÷ó
+     */
+    @Query("SELECT * FROM key_value_store WHERE key = :key AND userId = :userId LIMIT 1")
+    suspend fun getByKey(key: String, userId: String): KeyValueEntity?
+
+    /**
+     * ≠¸íöWf«¸øí÷óFlowH - Í¢Îø§‡„ñ	
+     */
+    @Query("SELECT * FROM key_value_store WHERE key = :key AND userId = :userId LIMIT 1")
+    fun getByKeyFlow(key: String, userId: String): Flow<KeyValueEntity?>
+
+    /**
+     * Ê¸∂¸nh«¸øí÷ó
+     */
+    @Query("SELECT * FROM key_value_store WHERE userId = :userId ORDER BY timestamp DESC")
+    suspend fun getAllByUser(userId: String): List<KeyValueEntity>
+
+    /**
+     * Öan«¸øí÷ó
+     */
+    @Query("SELECT * FROM key_value_store WHERE userId = :userId AND syncStatus = 'PENDING' ORDER BY timestamp ASC")
+    suspend fun getPendingSync(userId: String): List<KeyValueEntity>
+
+    /**
+     * 1WW_«¸øí÷ó
+     */
+    @Query("SELECT * FROM key_value_store WHERE userId = :userId AND syncStatus = 'FAILED' ORDER BY timestamp ASC")
+    suspend fun getFailedSync(userId: String): List<KeyValueEntity>
+
+    /**
+     * ∂KíÙ∞
+     */
+    @Query("UPDATE key_value_store SET syncStatus = :status WHERE key = :key AND userId = :userId")
+    suspend fun updateSyncStatus(key: String, userId: String, status: SyncStatus)
+
+    /**
+     * ø§‡πøÛ◊íÙ∞
+     */
+    @Query("UPDATE key_value_store SET timestamp = :timestamp WHERE key = :key AND userId = :userId")
+    suspend fun updateTimestamp(key: String, userId: String, timestamp: Long)
+
+    /**
+     * Ê¸∂¸nh«¸øíJdÌ∞¢¶»Bji	
+     */
+    @Query("DELETE FROM key_value_store WHERE userId = :userId")
+    suspend fun deleteAllByUser(userId: String)
+
+    /**
+     * h«¸øíJd«–√∞(	
+     */
+    @Query("DELETE FROM key_value_store")
+    suspend fun deleteAll()
+
+    /**
+     * «¸øˆpí÷ó
+     */
+    @Query("SELECT COUNT(*) FROM key_value_store WHERE userId = :userId")
+    suspend fun getCount(userId: String): Int
+
+    /**
+     * Öan«¸øˆpí÷ó
+     */
+    @Query("SELECT COUNT(*) FROM key_value_store WHERE userId = :userId AND syncStatus = 'PENDING'")
+    suspend fun getPendingSyncCount(userId: String): Int
+}
+```
+
+### NetworkUtils.kt
+```kotlin
+package com.nowtask.app.utils
+
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
+import android.os.Build
+
+/**
+ * Õ√»Ô¸Ø•öí¡ß√Ø
+ */
+fun isNetworkAvailable(context: Context): Boolean {
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val network = connectivityManager.activeNetwork ?: return false
+    val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+
+    return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+}
+
+/**
+ * Õ√»Ô¸Ø∂Kí„ñYãÍπ ¸
+ */
+interface NetworkStateListener {
+    fun onNetworkAvailable()
+    fun onNetworkLost()
+}
+
+/**
+ * Õ√»Ô¸Ø∂Kí„ñYãﬁÕ¸∏„¸
+ */
+class NetworkMonitor(
+    private val context: Context,
+    private val listener: NetworkStateListener
+) {
+    private val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    private var networkCallback: ConnectivityManager.NetworkCallback? = null
+    private var isRegistered = false
+
+    companion object {
+        private const val TAG = "NetworkMonitor"
+    }
+
+    /**
+     * Õ√»Ô¸Ø„ñíãÀ
+     */
+    fun startMonitoring() {
+        if (isRegistered) {
+            android.util.Log.w(TAG, "Network monitoring already started")
+            return
+        }
+
+        val networkRequest = NetworkRequest.Builder()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+            .build()
+
+        networkCallback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                android.util.Log.d(TAG, "Network available: $network")
+                listener.onNetworkAvailable()
+            }
+
+            override fun onLost(network: Network) {
+                android.util.Log.d(TAG, "Network lost: $network")
+                listener.onNetworkLost()
+            }
+
+            override fun onCapabilitiesChanged(
+                network: Network,
+                networkCapabilities: NetworkCapabilities
+            ) {
+                val hasInternet = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                android.util.Log.d(TAG, "Network capabilities changed. Has internet: $hasInternet")
+            }
+        }
+
+        try {
+            connectivityManager.registerNetworkCallback(networkRequest, networkCallback!!)
+            isRegistered = true
+            android.util.Log.d(TAG, "Network monitoring started")
+        } catch (e: Exception) {
+            android.util.Log.e(TAG, "Failed to register network callback", e)
+        }
+    }
+
+    /**
+     * Õ√»Ô¸Ø„ñí\b
+     */
+    fun stopMonitoring() {
+        if (!isRegistered || networkCallback == null) {
+            android.util.Log.w(TAG, "Network monitoring not started or already stopped")
+            return
+        }
+
+        try {
+            connectivityManager.unregisterNetworkCallback(networkCallback!!)
+            isRegistered = false
+            networkCallback = null
+            android.util.Log.d(TAG, "Network monitoring stopped")
+        } catch (e: Exception) {
+            android.util.Log.e(TAG, "Failed to unregister network callback", e)
+        }
+    }
+}
+```
+
+---
+
+## KEY KOTLIN FILES (Core Implementation)
+
+### MainActivity.kt
+**Location:** android-app/app/src/main/java/com/nowtask/app/MainActivity.kt
+**Key Responsibilities:**
+- WebView initialization and management
+- Firebase Authentication (anonymous + Google Sign-In)
+- Network monitoring and sync management
+- Task reminder scheduling
+- Notification permissions handling
+
+**Key Methods:**
+- `checkUserStatus()`: Verify Firebase auth status
+- `setupUIAndLoadApp()`: Initialize UI and WebView bridge
+- `firebaseAuthWithGoogle()`: Google Sign-In flow
+- `onNetworkAvailable()`: Handle network restoration
+- `onNetworkLost()`: Handle network loss
+
+### FirestoreBridge.kt
+**Location:** android-app/app/src/main/java/com/nowtask/app/data/FirestoreBridge.kt
+**Key Responsibilities:**
+- Firestore î Room Database sync
+- Offline queuing and retry logic
+- Data corruption detection
+- JavaScript interface for WebView
+
+**Key Features:**
+- Automatic retry (3 attempts with exponential backoff)
+- Pending sync tracking
+- Data corruption detection ("[object Object]" checks)
+- Offline-first architecture
+- User authentication handling
+
+**Key Methods:**
+- `saveData()`: Save to Firestore with offline queue
+- `loadData()`: Load from cache/Firestore/Room
+- `syncPendingData()`: Retry queued operations
+- `getCachedData()`: Synchronous cache access
+
+---
+
+## ARCHITECTURE OVERVIEW
+
+```
+                                                             
+                    WebView (JS/HTML)                        
+  - Tasks UI, Routines, Settings                            
+  - JavaScript Bridge: FirestoreBridge, AndroidAuth          
+                                                             
+                          ï
+                                                             
+                    MainActivity                              
+  - WebView Host & Lifecycle Manager                        
+  - Firebase Auth (anonymous + Google Sign-In)              
+  - Network Monitoring & Event Handling                     
+                                                             
+                          ï
+                                                             
+           Data Layer (FirestoreBridge)                      
+  - Firestore Sync Manager                                  
+  - Offline Queue & Retry Logic                             
+  - Data Validation & Corruption Detection                  
+                                                             
+             ô                                  ñ
+                                                    
+      Firestore     êí Sync  êí        Room DB      
+      (Cloud)           Logic           (Local)     
+                                                    
+         ^                                      ^
+                                               
+                      Network Monitor         
+```
+
+---
+
+## RECENT UPDATES (Oct 2025)
+
+ **SDK Upgrade to API 35**
+- compileSdk: 33 í 35
+- targetSdk: 33 í 35
+- minSdk: 24 í 26 (Android 8.0+)
+- Status: Google Play compliant
+
+ **Build Optimization**
+- Gradle Memory: 2GB í 4GB
+- .gitignore added (sensitive files excluded)
+
+ **Documentation**
+- Firebase Fallback Guide (docs/FIREBASE_FALLBACK_GUIDE.md)
+- App Signing Guide (docs/APP_SIGNING_GUIDE.md)
+
+---
+
+## CURRENT STATUS
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| Authentication |  | Anonymous + Google Sign-In |
+| Firestore Sync |  | Offline-first with retry |
+| Room Database |  | Complete sync tracking |
+| Network Monitor |  | Real-time monitoring |
+| Widgets | † | TaskWidget, GaugeWidget (TBD) |
+| Notifications |  | WorkManager integration |
+| UI (WebView) |  | PWA assets embedded |
+
+---
+
+## KNOWN ISSUES & IMPROVEMENTS
+
+| Issue | Priority | Status |
+|-------|----------|--------|
+| Firestore down handling | HIGH |  Fallback documented |
+| Certificate management | HIGH |  Guide created |
+| Memory optimization | MEDIUM |  4GB allocated |
+| Widget implementation | MEDIUM | Û In progress |
+| Network resilience | MEDIUM |  Robust monitoring |
+
+---
+
+## DEPLOYMENT CHECKLIST
+
+Before releasing to Google Play:
+
+- [ ] Build with release certificate
+- [ ] SHA-1 registered in Firebase Console
+- [ ] SHA-1 registered in Google Play Console
+- [ ] targetSdk = 35 (verified)
+- [ ] google-services.json configured
+- [ ] Testing on real devices completed
+- [ ] Logs reviewed for errors
+- [ ] ProGuard/R8 minification tested
+- [ ] App signing certificate backed up
+- [ ] Version code incremented
+
+---
+
+## CONTACT & RESOURCES
+
+- GitHub: https://github.com/mo-tomi/nowtask6
+- Firebase Console: https://console.firebase.google.com
+- Google Play Console: https://play.google.com/console
+- Android Docs: https://developer.android.com
+
+---
+
+END OF DOCUMENT
+Generated: 2025-10-20
+Format: UTF-8 Plain Text

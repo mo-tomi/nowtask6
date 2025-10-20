@@ -1,0 +1,577 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nowtask</title>
+
+  <!-- PWA險ｭ螳・-->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#000000">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="nowtask">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <meta name="description" content="繝｢繝弱け繝ｭ繝・じ繧､繝ｳ縺ｮ繧ｷ繝ｳ繝励Ν縺ｪ繧ｿ繧ｹ繧ｯ邂｡逅・い繝励Μ">
+
+  <link rel="stylesheet" href="css/style-base.css?v=33">
+  <link rel="stylesheet" href="css/style-components.css?v=33">
+  <link rel="stylesheet" href="style.css?v=33">
+
+  <!-- HTML2Canvas for sharing screenshots -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <!-- 繝倥ャ繝繝ｼ -->
+  <header class="header">
+    <div class="header-content">
+      <h1 class="app-title" id="app-title-btn" style="cursor: pointer;">nowtask</h1>
+      <div class="header-actions">
+        <button class="share-icon-btn" id="share-icon-btn" aria-label="共有" title="共有">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+            <polyline points="16 6 12 2 8 6"></polyline>
+            <line x1="12" y1="2" x2="12" y2="15"></line>
+          </svg>
+        </button>
+        <button class="settings-icon-btn" id="settings-icon-btn" aria-label="設定" title="設定">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+        <button class="analytics-icon-btn" id="analytics-icon-btn" aria-label="蛻・梵" title="蛻・梵">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="13" width="4" height="8"></rect>
+            <rect x="10" y="8" width="4" height="13"></rect>
+            <rect x="17" y="3" width="4" height="18"></rect>
+          </svg>
+        </button>
+        <button class="calendar-icon-btn" id="calendar-icon-btn" aria-label="繧ｫ繝ｬ繝ｳ繝繝ｼ" title="繧ｫ繝ｬ繝ｳ繝繝ｼ">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 繧ｿ繝悶リ繝薙ご繝ｼ繧ｷ繝ｧ繝ｳ・亥炎髯､・・-->
+
+  <!-- 繝｡繧､繝ｳ繧ｳ繝ｳ繝・Φ繝・お繝ｪ繧｢ -->
+  <main class="main-content">
+    <!-- 繧ｿ繧ｹ繧ｯ繝ｪ繧ｹ繝・-->
+    <div class="tab-content active" id="tasks-tab">
+      <!-- 24譎る俣繧ｲ繝ｼ繧ｸ -->
+      <section class="time-gauge-container" id="time-gauge-container" role="region" aria-label="24譎る俣繧ｿ繧､繝繧ｲ繝ｼ繧ｸ">
+        <header class="time-gauge-header">
+          <button
+            class="gauge-nav-btn"
+            id="gauge-prev-btn" aria-label="前の日に移動" title="前の日に移動" type="button">
+            窶ｹ
+          </button>
+          <div class="gauge-header-center">
+            <div class="gauge-date-label" id="gauge-date-label">莉頑律</div>
+            <time class="current-time" id="current-time" datetime="00:00" aria-live="polite">00:00</time>
+            <div class="remaining-tasks" id="remaining-tasks" role="status" aria-live="polite" aria-atomic="true">
+              谿九ｊ: 0譎る俣
+            </div>
+          </div>
+          <button
+            class="gauge-nav-btn"
+            id="gauge-next-btn" aria-label="次の日に移動" title="次の日に移動" type="button">
+            窶ｺ
+          </button>
+        </header>
+        <div
+          class="time-gauge"
+          role="progressbar"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+          tabindex="0">
+          <div class="time-gauge-bg" aria-hidden="true"></div>
+          <div class="time-gauge-gridlines" aria-hidden="true">
+            <div class="gridline" style="left: 25%;"></div>
+            <div class="gridline" style="left: 50%;"></div>
+            <div class="gridline" style="left: 75%;"></div>
+          </div>
+          <div class="time-gauge-elapsed" id="time-gauge-elapsed" aria-hidden="true"></div>
+          <div class="time-gauge-scheduled" id="time-gauge-scheduled" aria-hidden="true"></div>
+          <div class="time-gauge-free" id="time-gauge-free" aria-hidden="true"></div>
+          <div class="time-marker" id="time-marker" aria-label="迴ｾ蝨ｨ譎ょ綾繝槭・繧ｫ繝ｼ" role="img"></div>
+        </div>
+        <div class="time-gauge-labels" role="list" aria-label="譎る俣繝ｩ繝吶Ν">
+          <span role="listitem" aria-label="0譎・>0:00</span>
+          <span role="listitem" aria-label="6譎・>6:00</span>
+          <span role="listitem" aria-label="12譎・>12:00</span>
+          <span role="listitem" aria-label="18譎・>18:00</span>
+          <span role="listitem" aria-label="24譎・>24:00</span>
+        </div>
+      </section>
+
+      <!-- 邨槭ｊ霎ｼ縺ｿ縺ｨ荳ｦ縺ｳ譖ｿ縺医さ繝ｳ繝医Ο繝ｼ繝ｫ -->
+      <div class="filter-sort-container" style="display:flex; align-items:center; gap:12px; margin: 12px 0; flex-wrap: wrap;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <label style="font-size:14px; color:#616161;">邨槭ｊ霎ｼ縺ｿ:</label>
+          <button id="filter-urgent" class="filter-btn" type="button">邱頑･</button>
+          <button id="filter-high-priority" class="filter-btn" type="button">蜆ｪ蜈亥ｺｦ:鬮・/button>
+          <button id="filter-clear" class="filter-btn-clear" type="button">繧ｯ繝ｪ繧｢</button>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <label for="sort-select" style="font-size:14px; color:#616161;">荳ｦ縺ｳ譖ｿ縺・</label>
+          <select id="sort-select">
+            <option value="time">譎る俣鬆・ｼ域悄髯舌′霑代＞鬆・ｼ・/option>
+            <option value="created">霑ｽ蜉鬆・ｼ域眠縺励＞鬆・ｼ・/option>
+            <option value="priority">蜆ｪ蜈磯・ｽ埼・/option>
+          </select>
+        </div>
+      </div>
+
+      <div id="tasks-list" class="task-list"></div>
+      <div class="empty-state" id="tasks-empty">
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="#d0d0d0" stroke-width="2" style="margin: 0 auto 24px;">
+          <circle cx="50" cy="50" r="35" stroke-dasharray="5,5"></circle>
+          <path d="M50 30 L50 50 L65 50" stroke-linecap="round"></path>
+        </svg>
+        <p style="font-size: 18px; font-weight: 500; margin-bottom: 12px; color: #9e9e9e;">繧ｿ繧ｹ繧ｯ縺後≠繧翫∪縺帙ｓ</p>
+        <small style="font-size: 14px; color: #bdbdbd;">+ 繝懊ち繝ｳ縺九ｉ繧ｿ繧ｹ繧ｯ繧定ｿｽ蜉縺励∪縺励ｇ縺・/small>
+      </div>
+
+      <!-- 螳御ｺ・ｸ医∩繧ｻ繧ｯ繧ｷ繝ｧ繝ｳ・域釜繧翫◆縺溘∩・・-->
+      <div class="completed-section" id="completed-section">
+        <button class="completed-toggle" id="completed-toggle">
+          <span class="toggle-icon">笆ｶ</span>
+          <span class="toggle-text">螳御ｺ・ｸ医∩</span>
+          <span class="completed-count" id="completed-count">(0)</span>
+        </button>
+        <div class="completed-content" id="completed-content">
+          <div id="completed-list" class="task-list"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 譁ｰ隕上ち繧ｹ繧ｯ菴懈・FAB -->
+  <button class="fab" id="create-task-btn" aria-label="譁ｰ隕上ち繧ｹ繧ｯ菴懈・">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+  </button>
+
+  <!-- 繧ｿ繧ｹ繧ｯ菴懈・/邱ｨ髮・Δ繝ｼ繝繝ｫ -->
+  <div class="modal" id="task-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">譁ｰ隕上ち繧ｹ繧ｯ</h2>
+        <button class="close-btn" id="close-modal-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="task-title">繧ｿ繧ｹ繧ｯ蜷・<span class="required">*</span></label>
+          <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+            <input type="text" id="task-title" maxlength="100" placeholder="繧ｿ繧ｹ繧ｯ蜷阪ｒ蜈･蜉・ autocomplete="off" style="flex: 1;">
+            <button type="button" class="btn btn-secondary" id="template-select-btn" style="padding: 10px 16px; white-space: nowrap;">搭 繝・Φ繝励Ξ繝ｼ繝・/button>
+          </div>
+          <div class="char-count"><span id="title-char-count">0</span>/100</div>
+        </div>
+        <div class="form-group">
+          <label for="task-memo">繝｡繝｢</label>
+          <textarea id="task-memo" rows="4" placeholder="繝｡繝｢繧貞・蜉幢ｼ井ｻｻ諢擾ｼ・></textarea>
+        </div>
+        <div class="form-group">
+          <label for="task-due-date">譛滄剞譌･</label>
+          <input type="date" id="task-due-date">
+        </div>
+        <div class="form-group">
+          <label for="task-duration">謇隕∵凾髢・/label>
+          <select id="task-duration">
+            <option value="">譎る俣譛ｪ險ｭ螳・/option>
+            <option value="30">30蛻・/option>
+            <option value="60">1譎る俣</option>
+            <option value="90">1譎る俣30蛻・/option>
+            <option value="120">2譎る俣</option>
+            <option value="150">2譎る俣30蛻・/option>
+            <option value="180">3譎る俣</option>
+            <option value="210">3譎る俣30蛻・/option>
+            <option value="240">4譎る俣</option>
+            <option value="270">4譎る俣30蛻・/option>
+            <option value="300">5譎る俣</option>
+            <option value="330">5譎る俣30蛻・/option>
+            <option value="360">6譎る俣</option>
+            <option value="390">6譎る俣30蛻・/option>
+            <option value="420">7譎る俣</option>
+            <option value="450">7譎る俣30蛻・/option>
+            <option value="480">8譎る俣</option>
+            <option value="510">8譎る俣30蛻・/option>
+            <option value="540">9譎る俣</option>
+            <option value="570">9譎る俣30蛻・/option>
+            <option value="600">10譎る俣</option>
+            <option value="630">10譎る俣30蛻・/option>
+            <option value="660">11譎る俣</option>
+            <option value="690">11譎る俣30蛻・/option>
+            <option value="720">12譎る俣</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="task-start-time">髢句ｧ区凾蛻ｻ</label>
+          <input type="time" id="task-start-time">
+        </div>
+        <div class="form-group">
+          <label for="task-end-time">邨ゆｺ・凾蛻ｻ</label>
+          <input type="time" id="task-end-time">
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="task-urgent">
+            邱頑･
+          </label>
+        </div>
+        <div class="form-group">
+          <label for="task-priority">蜆ｪ蜈磯・ｽ・/label>
+          <select id="task-priority">
+            <option value="">譛ｪ險ｭ螳・/option>
+            <option value="high">鬮・/option>
+            <option value="medium">荳ｭ</option>
+            <option value="low">菴・/option>
+          </select>
+        </div>
+        <div class="form-group timer-section" id="timer-section" style="display: none;">
+          <label>邏ｯ遨肴凾髢・/label>
+          <div class="timer-display">
+            <span id="timer-display">00:00:00</span>
+            <button type="button" class="timer-btn" id="timer-toggle-btn">髢句ｧ・/button>
+          </div>
+        </div>
+        <div class="form-group subtasks-section" id="subtasks-section" style="display: none;">
+          <label>繧ｵ繝悶ち繧ｹ繧ｯ</label>
+          <div id="subtasks-list" class="subtasks-list"></div>
+          <button type="button" class="btn-add-subtask" id="add-subtask-btn">+ 繧ｵ繝悶ち繧ｹ繧ｯ繧定ｿｽ蜉</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-btn">繧ｭ繝｣繝ｳ繧ｻ繝ｫ</button>
+        <button class="btn btn-danger" id="delete-btn" style="display: none;">蜑企勁</button>
+        <button class="btn btn-primary" id="save-btn">菫晏ｭ・/button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 遒ｺ隱阪ム繧､繧｢繝ｭ繧ｰ -->
+  <div class="modal" id="confirm-modal">
+    <div class="modal-content confirm-modal">
+      <div class="modal-header">
+        <h2 id="confirm-title">遒ｺ隱・/h2>
+      </div>
+      <div class="modal-body">
+        <p id="confirm-message"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="confirm-cancel-btn">繧ｭ繝｣繝ｳ繧ｻ繝ｫ</button>
+        <button class="btn btn-primary" id="confirm-ok-btn">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 險ｭ螳壹Δ繝ｼ繝繝ｫ -->
+  <div class="modal" id="settings-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>險ｭ螳・/h2>
+        <button class="close-btn" id="close-settings-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h3 class="settings-section-title">繝・う繝ｪ繝ｼ繝ｫ繝ｼ繝・ぅ繝ｳ</h3>
+        <p class="settings-description">豈取律郢ｰ繧願ｿ斐☆繧ｿ繧ｹ繧ｯ繧定ｨｭ螳壹〒縺阪∪縺吶ゅΝ繝ｼ繝・ぅ繝ｳ蜷阪→譎る俣繧定・逕ｱ縺ｫ險ｭ螳壹〒縺阪∪縺吶・/p>
+
+        <div id="routines-list" class="routines-list">
+          <!-- 繝ｫ繝ｼ繝・ぅ繝ｳ繧｢繧､繝・Β縺悟虚逧・↓霑ｽ蜉縺輔ｌ繧・-->
+        </div>
+
+        <button type="button" class="btn-add-routine" id="add-routine-btn">+ 繝ｫ繝ｼ繝・ぅ繝ｳ繧定ｿｽ蜉</button>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="save-settings-btn">菫晏ｭ・/button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 蛻・梵繝｢繝ｼ繝繝ｫ -->
+  <div class="modal" id="analytics-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>投 繝・・繧ｿ蛻・梵</h2>
+        <button class="close-btn" id="close-analytics-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- 繧ｿ繧ｹ繧ｯ繝ｩ繝ｳ繧ｭ繝ｳ繧ｰ -->
+        <section class="analytics-section">
+          <h3 class="analytics-section-title">醇 繧ｿ繧ｹ繧ｯ繝ｩ繝ｳ繧ｭ繝ｳ繧ｰ TOP5</h3>
+          <p class="analytics-description">螳御ｺ・＠縺溘ち繧ｹ繧ｯ縺ｮ荳ｭ縺ｧ縲∵怙繧よ凾髢薙ｒ縺九￠縺溘ち繧ｹ繧ｯ縺ｧ縺・/p>
+          <div id="task-ranking-list" class="ranking-list"></div>
+        </section>
+
+        <!-- 遨ｺ縺肴凾髢灘・譫・-->
+        <section class="analytics-section">
+          <h3 class="analytics-section-title">竢ｰ 遨ｺ縺肴凾髢灘・譫・/h3>
+          <p class="analytics-description">豈取律縺ｮ遨ｺ縺肴凾髢薙ｒ險倬鹸繝ｻ蛻・梵縺励※縺・∪縺・/p>
+          <div id="free-time-stats" class="stats-grid"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- 繧ｫ繝ｬ繝ｳ繝繝ｼ繝｢繝ｼ繝繝ｫ -->
+  <div class="modal" id="calendar-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>套 繧ｫ繝ｬ繝ｳ繝繝ｼ</h2>
+        <button class="close-btn" id="close-calendar-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- 繧ｫ繝ｬ繝ｳ繝繝ｼ繝翫ン繧ｲ繝ｼ繧ｷ繝ｧ繝ｳ -->
+        <div class="calendar-nav">
+          <button class="calendar-nav-btn" id="calendar-prev-btn">窶ｹ</button>
+          <div class="calendar-current-month" id="calendar-current-month">2025蟷ｴ1譛・/div>
+          <button class="calendar-nav-btn" id="calendar-next-btn">窶ｺ</button>
+        </div>
+
+        <!-- 繧ｫ繝ｬ繝ｳ繝繝ｼ繧ｰ繝ｪ繝・ラ -->
+        <div class="calendar-grid" id="calendar-grid">
+          <!-- 譖懈律繝倥ャ繝繝ｼ -->
+          <div class="calendar-weekday">譌･</div>
+          <div class="calendar-weekday">譛・/div>
+          <div class="calendar-weekday">轣ｫ</div>
+          <div class="calendar-weekday">豌ｴ</div>
+          <div class="calendar-weekday">譛ｨ</div>
+          <div class="calendar-weekday">驥・/div>
+          <div class="calendar-weekday">蝨・/div>
+
+          <!-- 譌･莉倥そ繝ｫ縺ｯ蜍慕噪縺ｫ逕滓・ -->
+        </div>
+
+        <!-- 譛域ｬ｡邨ｱ險・-->
+        <div id="calendar-monthly-stats" class="calendar-monthly-stats"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 繝・Φ繝励Ξ繝ｼ繝磯∈謚槭Δ繝ｼ繝繝ｫ -->
+  <div class="modal" id="template-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>搭 繝・Φ繝励Ξ繝ｼ繝磯∈謚・/h2>
+        <button class="close-btn" id="close-template-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="settings-description">繧医￥菴ｿ縺・ち繧ｹ繧ｯ繧偵ユ繝ｳ繝励Ξ繝ｼ繝医→縺励※菫晏ｭ倥〒縺阪∪縺・/p>
+
+        <div id="templates-list" class="templates-list">
+          <!-- 繝・Φ繝励Ξ繝ｼ繝医い繧､繝・Β縺悟虚逧・↓霑ｽ蜉縺輔ｌ繧・-->
+        </div>
+
+        <button type="button" class="btn-add-template" id="add-template-btn">+ 譁ｰ隕上ユ繝ｳ繝励Ξ繝ｼ繝医ｒ霑ｽ蜉</button>
+
+        <!-- 繝・Φ繝励Ξ繝ｼ繝亥・蜉帙ヵ繧ｩ繝ｼ繝・亥・譛溘・髱櫁｡ｨ遉ｺ・・-->
+        <div id="template-input-form" class="template-input-form" style="display: none;">
+          <div class="form-group">
+            <label for="template-name-input">繧ｿ繧ｹ繧ｯ蜷・<span class="required">*</span></label>
+            <input type="text" id="template-name-input" maxlength="100" placeholder="繧ｿ繧ｹ繧ｯ蜷阪ｒ蜈･蜉・>
+          </div>
+          <div class="form-group">
+            <label for="template-memo-input">繝｡繝｢</label>
+            <textarea id="template-memo-input" rows="3" placeholder="繝｡繝｢繧貞・蜉幢ｼ井ｻｻ諢擾ｼ・></textarea>
+          </div>
+          <div class="form-group">
+            <label for="template-duration-input">謇隕∵凾髢・/label>
+            <select id="template-duration-input">
+              <option value="">譎る俣譛ｪ險ｭ螳・/option>
+              <option value="30">30蛻・/option>
+              <option value="60">1譎る俣</option>
+              <option value="90">1譎る俣30蛻・/option>
+              <option value="120">2譎る俣</option>
+              <option value="150">2譎る俣30蛻・/option>
+              <option value="180">3譎る俣</option>
+              <option value="210">3譎る俣30蛻・/option>
+              <option value="240">4譎る俣</option>
+              <option value="270">4譎る俣30蛻・/option>
+              <option value="300">5譎る俣</option>
+              <option value="330">5譎る俣30蛻・/option>
+              <option value="360">6譎る俣</option>
+              <option value="390">6譎る俣30蛻・/option>
+              <option value="420">7譎る俣</option>
+              <option value="450">7譎る俣30蛻・/option>
+              <option value="480">8譎る俣</option>
+              <option value="510">8譎る俣30蛻・/option>
+              <option value="540">9譎る俣</option>
+              <option value="570">9譎る俣30蛻・/option>
+              <option value="600">10譎る俣</option>
+              <option value="630">10譎る俣30蛻・/option>
+              <option value="660">11譎る俣</option>
+              <option value="690">11譎る俣30蛻・/option>
+              <option value="720">12譎る俣</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="template-start-time-input">髢句ｧ区凾蛻ｻ</label>
+            <input type="time" id="template-start-time-input">
+          </div>
+          <div class="form-group">
+            <label for="template-end-time-input">邨ゆｺ・凾蛻ｻ</label>
+            <input type="time" id="template-end-time-input">
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 16px;">
+            <button type="button" class="btn btn-secondary" id="template-cancel-btn" style="flex: 1;">繧ｭ繝｣繝ｳ繧ｻ繝ｫ</button>
+            <button type="button" class="btn btn-primary" id="template-save-btn" style="flex: 1;">菫晏ｭ・/button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="template-close-btn">髢峨§繧・/button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 譎る俣繧ｪ繝ｼ繝舌・隴ｦ蜻翫Δ繝ｼ繝繝ｫ -->
+  <div class="modal" id="time-overload-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>笞・・譎る俣繧ｪ繝ｼ繝舌・隴ｦ蜻・/h2>
+        <button class="close-btn" id="close-overload-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="overload-warning">
+          <p class="overload-message">
+            莉頑律縺ｮ繧ｿ繧ｹ繧ｯ縺梧凾髢灘・縺ｫ蜿弱∪繧翫∪縺帙ｓ縲・br>
+            <strong id="overload-amount"></strong>蛻・が繝ｼ繝舌・縺励※縺・∪縺吶・          </p>
+          <p class="overload-description">
+            莉･荳九・繧ｿ繧ｹ繧ｯ縺ｮ譎る俣繧定ｪｿ謨ｴ縺吶ｋ縺九∽ｸ驛ｨ繧貞挨縺ｮ譌･縺ｫ遘ｻ蜍輔☆繧九％縺ｨ繧偵♀縺吶☆繧√＠縺ｾ縺吶・          </p>
+        </div>
+
+        <div id="overload-tasks-list" class="overload-tasks-list">
+          <!-- 繧ｿ繧ｹ繧ｯ繝ｪ繧ｹ繝医′蜍慕噪縺ｫ逕滓・縺輔ｌ繧・-->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="overload-cancel-btn">髢峨§繧・/button>
+        <button class="btn btn-primary" id="overload-adjust-btn">繧ｿ繧ｹ繧ｯ繧定ｪｿ謨ｴ縺吶ｋ</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/firebase-init.js?v=33"></script>
+  <script src="js/core.js?v=33"></script>
+  <script src="js/tasks.js?v=33"></script>
+  <script src="js/render.js?v=33"></script>
+  <script src="js/modals.js?v=33"></script>
+  <script src="js/gauge.js?v=33"></script>
+  <script src="js/analytics.js?v=33"></script>
+  <script src="js/overload.js?v=33"></script>
+  <script src="js/share.js?v=33"></script>
+  <script src="js/calendar.js?v=33"></script>
+  <script src="js/templates.js?v=33"></script>
+  <script src="js/events.js?v=33"></script>
+  <script src="js/ui-main.js?v=33"></script>
+  <script src="js/migration.js?v=33"></script>
+
+  <!-- 繧ｯ繧､繝・け蜈･蜉幢ｼ育判髱｢荳矩Κ蝗ｺ螳夲ｼ・-->
+  <form class="quick-add" id="quick-add-form">
+    <div class="quick-input-row">
+      <button type="button" class="quick-action-btn" id="quick-history-btn" title="螻･豁ｴ">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+      </button>
+      <div class="quick-input-wrapper">
+        <input type="text" id="quick-add-input" placeholder="繧ｿ繧ｹ繧ｯ蜷阪ｒ蜈･蜉帙＠縺ｦEnter" maxlength="100" autocomplete="off" enterkeyhint="done">
+        <div class="quick-input-actions">
+          <button type="button" class="quick-action-btn" id="quick-date-btn" title="譌･莉倥・譎る俣繧定ｨｭ螳・>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </button>
+          <button type="submit" class="quick-action-btn" title="霑ｽ蜉">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 11 12 14 22 4"></polyline>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="quick-history-tags" class="quick-history-tags" style="display: none;"></div>
+
+    <div id="quick-datetime-panel" class="quick-datetime-panel" style="display: none;">
+      <div class="quick-datetime-header">
+        <span>譌･莉倥・譎る俣險ｭ螳・/span>
+        <button type="button" id="quick-datetime-close" class="quick-datetime-close">&times;</button>
+      </div>
+      <div class="quick-datetime-row">
+        <label for="quick-add-date">譛滄剞譌･:</label>
+        <input type="date" id="quick-add-date">
+      </div>
+      <div class="quick-datetime-row">
+        <label for="quick-add-duration">謇隕∵凾髢・</label>
+        <select id="quick-add-duration">
+          <option value="">譛ｪ險ｭ螳・/option>
+          <option value="30">30蛻・/option>
+          <option value="60">1譎る俣</option>
+          <option value="90">1譎る俣30蛻・/option>
+          <option value="120">2譎る俣</option>
+          <option value="150">2譎る俣30蛻・/option>
+          <option value="180">3譎る俣</option>
+          <option value="210">3譎る俣30蛻・/option>
+          <option value="240">4譎る俣</option>
+          <option value="270">4譎る俣30蛻・/option>
+          <option value="300">5譎る俣</option>
+          <option value="330">5譎る俣30蛻・/option>
+          <option value="360">6譎る俣</option>
+          <option value="390">6譎る俣30蛻・/option>
+          <option value="420">7譎る俣</option>
+          <option value="450">7譎る俣30蛻・/option>
+          <option value="480">8譎る俣</option>
+          <option value="510">8譎る俣30蛻・/option>
+          <option value="540">9譎る俣</option>
+          <option value="570">9譎る俣30蛻・/option>
+          <option value="600">10譎る俣</option>
+          <option value="630">10譎る俣30蛻・/option>
+          <option value="660">11譎る俣</option>
+          <option value="690">11譎る俣30蛻・/option>
+          <option value="720">12譎る俣</option>
+        </select>
+      </div>
+    </div>
+  </form>
+
+  <!-- Service Worker逋ｻ骭ｲ -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(registration => {
+            console.log('Service Worker registered:', registration.scope);
+          })
+          .catch(error => {
+            console.log('Service Worker registration failed:', error);
+          });
+      });
+    }
+  </script>
+</body>
+</html>
