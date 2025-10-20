@@ -5,22 +5,54 @@ This directory contains modularized JavaScript files for the nowtask application
 ## Module Structure
 
 ### Render Module (render-*.js)
-The rendering logic has been split into 6 focused modules:
+The rendering logic has been split into 13 focused modules (detailed granular split):
+
+**Core Rendering (render-02 suite - 23,341 chars total):**
 
 - **render-01-helpers.js** (150 lines)
   - Helper functions for date/time operations
   - `groupTasksByDate()`, `formatDate()`, `formatDateISO()`
   - UI setup functions
 
-- **render-02-core-rendering.js** (677 lines)
-  - Main task rendering functions
-  - `renderTasks()`, `createTaskElement()`, `renderDateGroup()`
-  - Task card creation and DOM manipulation
+- **render-02a-task-card.js** (99 lines, 3,073 chars)
+  - Task card creation
+  - `createNewTaskCard()` - builds new task cards
 
-- **render-03-drag-drop.js** (555 lines)
-  - Drag and drop functionality
-  - `setupDragAndDrop()`, `getDragAfterElement()`
-  - Task reordering logic
+- **render-02b-render-core.js** (178 lines, 6,536 chars)
+  - Main rendering pipeline
+  - `renderTasks()`, `renderSectionLabel()`, `renderDateGroup()`
+  - Core DOM updates
+
+- **render-02c-date-section.js** (86 lines, 3,042 chars)
+  - Date grouping and section rendering
+  - `renderTaskWithSubtasks()` - subtask display logic
+
+- **render-02d-task-element.js** (157 lines, 5,561 chars)
+  - Individual task element creation
+  - `createTaskElement()` - element factory
+
+- **render-02e-subtask-input.js** (157 lines, 5,129 chars)
+  - Inline subtask input handling
+  - `createSubtaskInputInline()` - form creation
+
+**Drag & Drop (render-03 suite - 19,163 chars total):**
+
+- **render-03a-subtask-input.js** (54 lines, 1,316 chars)
+  - Subtask input UI elements
+
+- **render-03b-drag-events.js** (166 lines, 5,946 chars)
+  - Drag event initialization
+  - `setupDragAndDrop()` Part 1 - event listeners
+
+- **render-03c-drag-handlers.js** (163 lines, 5,438 chars)
+  - Drag operation handlers
+  - `setupDragAndDrop()` Part 2 - drag logic
+
+- **render-03d-drag-utils.js** (172 lines, 6,463 chars)
+  - Drag utility functions
+  - `getDragAfterElement()`, `saveNewTaskOrder()`
+
+**Interactions & Utilities:**
 
 - **render-04-interactions.js** (342 lines)
   - Swipe handlers and context menus
@@ -105,23 +137,32 @@ The modules should be loaded in this order to ensure proper dependency resolutio
    - events-03-task-input.js
    - modals-01-create-edit.js
 
-3. **Rendering modules**:
-   - render-02-core-rendering.js
-   - render-03-drag-drop.js
-   - gauge-02-render.js
+3. **Core Rendering modules** (render-02 suite):
+   - render-02a-task-card.js
+   - render-02b-render-core.js
+   - render-02c-date-section.js
+   - render-02d-task-element.js
+   - render-02e-subtask-input.js
 
-4. **Interactive modules**:
+4. **Drag & Drop modules** (render-03 suite):
+   - render-03a-subtask-input.js
+   - render-03b-drag-events.js
+   - render-03c-drag-handlers.js
+   - render-03d-drag-utils.js
+
+5. **Interactive modules**:
    - render-04-interactions.js
    - render-05-selection-bulk.js
    - render-06-quick-actions.js
+   - gauge-02-render.js
    - gauge-03-new-gauge.js
 
-5. **Modal modules**:
+6. **Modal modules**:
    - modals-02-subtasks.js
    - modals-03-settings-routines.js
    - modals-04-auth-user.js
 
-6. **Event listeners** (should be loaded last):
+7. **Event listeners** (should be loaded last):
    - events-01-auth-header.js
    - events-02-modals.js
 
@@ -138,15 +179,24 @@ To use these modules, include them in your HTML in the proper order:
 <script src="js/events-03-task-input.js"></script>
 <script src="js/modals-01-create-edit.js"></script>
 
-<!-- Rendering -->
-<script src="js/render-02-core-rendering.js"></script>
-<script src="js/render-03-drag-drop.js"></script>
-<script src="js/gauge-02-render.js"></script>
+<!-- Core Rendering (render-02 suite) -->
+<script src="js/render-02a-task-card.js"></script>
+<script src="js/render-02b-render-core.js"></script>
+<script src="js/render-02c-date-section.js"></script>
+<script src="js/render-02d-task-element.js"></script>
+<script src="js/render-02e-subtask-input.js"></script>
+
+<!-- Drag & Drop (render-03 suite) -->
+<script src="js/render-03a-subtask-input.js"></script>
+<script src="js/render-03b-drag-events.js"></script>
+<script src="js/render-03c-drag-handlers.js"></script>
+<script src="js/render-03d-drag-utils.js"></script>
 
 <!-- Interactive -->
 <script src="js/render-04-interactions.js"></script>
 <script src="js/render-05-selection-bulk.js"></script>
 <script src="js/render-06-quick-actions.js"></script>
+<script src="js/gauge-02-render.js"></script>
 <script src="js/gauge-03-new-gauge.js"></script>
 
 <!-- Modals -->
