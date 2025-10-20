@@ -45,3 +45,10 @@ node_modules/
 .vscode/
 *.sublime-project
 *.sublime-workspace
+.claude/settings.local.json
+
+# Build files (specific)
+android-app/app/build/
+*.dex
+*.class
+!gradle-wrapper.jar
